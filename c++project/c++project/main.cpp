@@ -26,10 +26,18 @@ int tmult_ok_div(int x, int y){
     return !x || p/x == y;
 }
 
+//乘法溢出检验
 int tmult_ok_int64(int x, int y){
     int64_t pll = (int64_t) x*y; //强制类型转化 很关键
     /*see if casting to int preserves value */
     return pll == (int) pll;
+}
+
+//除法(除以2的k次幂)
+int div_2_k(int x, int k){
+    // 判断除法的结果是否为负数 （正数：逻辑右移 向下舍入  负数：算数右移 向上舍入）
+    int result = (x < 0 ? (x + (1 << k) - 1) : x) >> k;
+    return result;
 }
 
 int main(int argc, const char * argv[]) {
@@ -37,6 +45,7 @@ int main(int argc, const char * argv[]) {
     result = tadd_ok(-1, -2147483648); // -2147483648 int型最小值 保证溢出
     cout<<"溢出的结果为（1:不溢出， 0:溢出）："<<result<<endl;
 //    cout<<1<<endl;
+    printf("%d\n",div_2_k(44, 3));
     return 0;
     
 }
