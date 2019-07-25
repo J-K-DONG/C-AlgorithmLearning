@@ -13,7 +13,8 @@ typedef int bool;
 
 
 // 冒泡排序+优化
-void BubbleSort(int *array, int length){
+// 时间复杂度：O(n^2) 稳定性：稳定
+void bubbleSort(int *array, int length){
     int temp = 0;
     int last_exchange_index = 0; // 上一次交换的位置
     int sorted_board = length - 1; // 排序边界
@@ -40,14 +41,76 @@ void BubbleSort(int *array, int length){
     }
 }
 
+// 选择排序 时间复杂度：O(n^2) 稳定性：不稳定
+void selectSort(int *array, int array_length){
+    int min = 0;
+    int temp = 0;
+    for(int i = 0; i < array_length; i++){
+        min = i;
+        for(int j = i + 1; j < array_length; j++){
+            if(array[min]>array[j]){
+                min = j;
+            }
+        }
+        temp = array[i];
+        array[i] = array[min];
+        array[min] = temp;
+    }
+}
+
+// 快速排序 时间复杂度：O(n*logn)   稳定行：不稳定
+void quickSort(int *array, int begin, int end){
+    if(begin >= end - 1)
+        return;
+    int mid = array[begin];
+    int left_index = begin;
+    int right_index = end - 1;
+    while(left_index < right_index){
+        while(left_index < right_index){
+            if(array[right_index] < mid){
+                array[left_index++] = array[right_index];
+                break;
+            }
+            --right_index;
+        }
+        while(left_index < right_index){
+            if(array[left_index] >= mid){
+                array[right_index--] = array[left_index];
+                break;
+            }
+            ++left_index;
+        }
+    }
+    array[left_index] = mid;
+    quickSort(array, begin, left_index);
+    quickSort(array, right_index + 1, end);
+}
+
 
 int main(int argc, const char * argv[]) {
     // insert code here...
     printf("Hello, World!\n");
-    int length = 6;
-    int a[6] = {6, 24, 7, 2, 5, 19};
+    int a[10] = {6, 24, 7, 2, 5, 19, 44, 1, 12, 15};
     
-    BubbleSort(a, 6);
+    int (*p)[10];
+    p = &a;
+    int length = sizeof(a) / sizeof(int);
+    
+    for(int i = 0; i<length; i++){
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+
+//    printf("%d\n", length);
+//    bubbleSort(a, 10);
+//    selectSort(*p, length);
+    quickSort(a, 0, length);
+    
+    
+    
+//    printf("%d\n%d\n", a, a+1);
+//    printf("%d\n%d\n%d\n", &a, &a[9], &a+1);
+
     for(int i = 0; i<length; i++){
         printf("%d ", a[i]);
     }
