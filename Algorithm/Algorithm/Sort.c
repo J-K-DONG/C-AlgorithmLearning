@@ -7,6 +7,7 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h>
 typedef int bool;
 #define TRUE 1;
 #define FALSE 0;
@@ -15,6 +16,8 @@ typedef int bool;
 // 冒泡排序+优化  时间复杂度：O(n^2) 稳定性：稳定
 void bubbleSort(int *array, int length)
 {
+    if(length < 2)
+        return;
     int temp = 0;
     int last_exchange_index = 0; // 上一次交换的位置
     int sorted_board = length - 1; // 排序边界
@@ -47,6 +50,8 @@ void bubbleSort(int *array, int length)
 // 选择排序 时间复杂度：O(n^2) 稳定性：不稳定
 void selectSort(int *array, int array_length)
 {
+    if(array_length < 2)
+        return;
     int min = 0;
     int temp = 0;
     for(int i = 0; i < array_length; ++i)
@@ -64,7 +69,7 @@ void selectSort(int *array, int array_length)
 // 快速排序 时间复杂度：O(n*logn)   稳定行：不稳定  分治
 void quickSort(int *array, int begin, int end)
 {
-    if(begin >= end - 1)
+    if(begin > end - 1)
         return;
     int mid = array[begin];
     int left_index = begin;
@@ -98,6 +103,8 @@ void quickSort(int *array, int begin, int end)
 //插入排序 时间复杂度：O(n^2)   稳定性：稳定
 void insertSort(int *array, int array_length)
 {
+    if(array_length < 2)
+        return;
     int i,j,temp;
     for(i = 1; i < array_length; ++i)
     {
@@ -111,6 +118,8 @@ void insertSort(int *array, int array_length)
 //希尔排序。  时间复杂度：O(n^3/2)   稳定性：不稳定
 void shellSort(int *array, int begin, int end)
 {
+    if(begin > end - 1)
+        return;
     for(int step = (end - begin) / 2; step > 0; step /= 2) //步长逐渐变成之前的一半
     {
         for(int i = begin; i < step; ++i) // 循环第一个步长中的每一个元素
@@ -176,7 +185,7 @@ void buildMaxHeap_2(int *array, int begin, int end)
     if(begin > end - 1)
         return;
     int parrent, temp;
-    for(int i = end; i > 0; --i)
+    for(int i = end; i >= 0; --i)
     {
         if(i % 2)
             parrent = i / 2;
@@ -193,7 +202,7 @@ void buildMaxHeap_2(int *array, int begin, int end)
 
 void heapSort(int *array, int begin, int end)
 {
-    if(begin > end - 1)
+    if(begin >= end - 1)
         return;
     int temp;
     buildMaxHeap_2(array, begin, end);
@@ -207,12 +216,62 @@ void heapSort(int *array, int begin, int end)
 }
 
 
+// 归并排序  时间复杂度：O(n * logn)  稳定性： 稳定
+void mergeSortOrder(int *array, int begin, int mid, int end)
+{
+//    printf("小范围排序：");
+//    printf("%d %d %d\n", begin, mid, end);
+    int *pBuf = (int *)malloc(sizeof(int) * (end - begin));
+    int *pTemp = pBuf;
+    int lindex = begin;
+    int rindex = mid;
+    
+    while((lindex < mid) && (rindex < end))
+        *pTemp++ = (array[lindex] < array[rindex] ? array[lindex++] : array[rindex++]);
+//    printf("比较完成\n");
+    while(lindex < mid)
+        *pTemp++ = array[lindex++];
+    while(rindex <= end)
+        *pTemp++ = array[rindex++];
+    pTemp = pBuf;
+    for(int i = begin; i <= end; ++i)
+        array[i] = *pTemp++;
+//    for(int i = begin; i <= end; i++)
+//        printf("%d ", array[i]);
+//    printf("\n");
+    
+    free(pBuf);
+}
+void mergeSort(int *array, int begin, int end)
+{
+    if(begin > end - 1)
+        return;
+    if(begin >= end - 1)
+    {
+        if(array[begin] > array[end])
+        {
+            int temp = array[begin];
+            array[begin] = array[end];
+            array[end] = temp;
+//            printf("交换的两个元素:\n");
+//            printf("%d %d\n", array[begin], array[end]);
+        }
+        return;
+    }
+    int mid = (end + begin) / 2;
+//    printf("%d %d %d\n", begin, mid, end);
+    mergeSort(array, begin, mid);
+    mergeSort(array, mid, end);
+    mergeSortOrder(array, begin, mid, end);
+    
+}
+
 
 int main(int argc, const char * argv[])
 {
-    // 排序结果都为从小到大
-    int a[10] = {6, 24, 7, 2, 5, 19, 44, 1, 12, 15};
     
+    // 排序结果都为从小到大
+    int a[15] = {6, 24, 17, 2, 77, 7, 25, 3, 11, 5, 19, 44, 1, 12, 15};
     int length = sizeof(a) / sizeof(int);
     printf("原始数组元素:\n");
     for(int i = 0; i<length; i++)
@@ -225,7 +284,8 @@ int main(int argc, const char * argv[])
 //    quickSort(a, 0, length);
 //    insertSort(a, length);
 //    shellSort(a, 0, length);
-    heapSort(a, 0, length - 1);
+//    heapSort(a, 0, length - 1);
+    mergeSort(a, 0, length - 1);
     
     printf("排序后元素的顺序:\n");
     for(int i = 0; i<length; i++)
