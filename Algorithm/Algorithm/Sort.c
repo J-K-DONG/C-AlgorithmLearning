@@ -14,7 +14,14 @@ typedef int bool;
 #define FALSE 0;
 
 
-// 1. 冒泡排序+优化  时间复杂度：O(n^2) 稳定性：稳定
+void swap(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+//   冒泡排序+优化  时间复杂度：n^2 / n / n^2   稳定性：稳定
 void bubbleSort(int *array, int array_length)
 {
     if(array_length < 2)
@@ -25,10 +32,6 @@ void bubbleSort(int *array, int array_length)
     bool exchange_flag = TRUE; // 判断每一轮排序是否有交换位置（TRUE没有，FALSE有） 如果有，说明排序还在进行 没有，说明排序完成
     for(int i = 0; i < array_length; ++i)
     {
-//        for(int i = 0; i<length; i++){
-//            printf("%d ", array[i]);
-//        }
-//        printf("\n");
         exchange_flag = TRUE; // 没有交换位置
         for(int j = 0; j < sorted_board; ++j)
         {
@@ -48,7 +51,51 @@ void bubbleSort(int *array, int array_length)
     }
 }
 
-// 2. 选择排序 时间复杂度：O(n^2) 稳定性：不稳定
+
+/*   鸡尾酒排序 ： 时间复杂度： n^2 / n / n^2   稳定性： 稳定*/
+void cocktailSort(int *array, int len)
+{
+    int sorted_left = 0;
+    int sorted_right = len - 1;
+    int last_exchange_index = 0;
+    bool exchange_flag = TRUE;
+    for(int i = 0; i < len; ++i)
+    {
+        exchange_flag = TRUE;
+        if(i % 2)
+        {
+            for(int j = sorted_left; j < sorted_right; ++j)
+            {
+                if(array[j] > array[j + 1])
+                {
+                    swap(&array[j], &array[j + 1]);
+                    exchange_flag = FALSE;
+                    last_exchange_index = j;
+                }
+            }
+            sorted_right = last_exchange_index;
+        }
+        else
+        {
+            for(int k = sorted_right; k > sorted_left; --k)
+            {
+                if(array[k] < array[k - 1])
+                {
+                    swap(&array[k], &array[k - 1]);
+                    exchange_flag = FALSE;
+                    last_exchange_index = k;
+                }
+            }
+            sorted_left = last_exchange_index;
+        }
+        if(exchange_flag)
+            break;
+    }
+}
+
+
+
+//  选择排序 时间复杂度：O(n^2) 稳定性：不稳定
 void selectSort(int *array, int array_length)
 {
     if(array_length < 2)
@@ -67,7 +114,7 @@ void selectSort(int *array, int array_length)
     }
 }
 
-// 3. 快速排序 时间复杂度：O(n*logn)   稳定行：不稳定  分治
+//  快速排序 时间复杂度：O(n*logn)   稳定行：不稳定  分治
 void quickSort(int *array, int begin, int end)
 {
     if(begin > end - 1)
@@ -101,7 +148,7 @@ void quickSort(int *array, int begin, int end)
     quickSort(array, right_index + 1, end);
 }
 
-// 4. 插入排序 时间复杂度：O(n^2)   稳定性：稳定
+//  插入排序 时间复杂度：O(n^2)   稳定性：稳定
 void insertSort(int *array, int array_length)
 {
     if(array_length < 2)
@@ -116,7 +163,7 @@ void insertSort(int *array, int array_length)
 }
 
 
-// 5. 希尔排序。  时间复杂度：O(n^3/2)   稳定性：不稳定
+//  希尔排序。  时间复杂度：O(n^3/2)   稳定性：不稳定
 void shellSort(int *array, int begin, int end)
 {
     if(begin > end - 1)
@@ -147,7 +194,7 @@ void shellSort(int *array, int begin, int end)
 
 
 /*
- 6. 堆排序
+  堆排序
  时间复杂度： O(n*logn)
  稳定性： 不稳定
  */
@@ -226,7 +273,7 @@ void heapSort(int *array, int begin, int end)
 }
 
 
-// 7. 归并排序  时间复杂度：O(n * logn)  稳定性： 稳定
+//  归并排序  时间复杂度：O(n * logn)  稳定性： 稳定
 void mergeSortOrder(int *array, int begin, int mid, int end)
 {
 //    printf("小范围排序：");
@@ -286,7 +333,7 @@ void printArray(int *array, int array_length)
 }
 
 /*
- 8. 桶排序
+ 桶排序
  稳定性：稳定  时间复杂度：O(n + k) 线性时间
  可应用于数据量分布比较均匀，或比较侧重于区间数量时
  在额外空间充足的情况下，尽量增大桶的数量
@@ -461,6 +508,8 @@ void bucketSort(int *array, int array_length)
 }
 
 
+
+
 int main(int argc, const char * argv[])
 {
     // 排序结果都为从小到大
@@ -472,12 +521,13 @@ int main(int argc, const char * argv[])
     printArray(a, length);
     printf("\n--------------------------\n");
 //    bubbleSort(a, length);
+    cocktailSort(a, length);
 //    selectSort(a, length);
 //    quickSort(a, 0, length - 1);
 //    insertSort(a, length);
 //    shellSort(a, 0, length - 1);
 //    heapSort(a, 0, length - 1);
-    mergeSort(a, 0, length - 1);
+//    mergeSort(a, 0, length - 1);
 //    bucketSort(a, length);
 
     printf("--------------------------\n");
