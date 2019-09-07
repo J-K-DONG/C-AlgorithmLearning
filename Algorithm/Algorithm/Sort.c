@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 typedef int bool;
 #define TRUE 1;
 #define FALSE 0;
@@ -59,40 +60,74 @@ void cocktailSort(int *array, int len)
     int sorted_right = len - 1;
     int last_exchange_index = 0;
     bool exchange_flag = TRUE;
-    for(int i = 0; i < len; ++i)
+    while(exchange_flag)
     {
-        exchange_flag = TRUE;
-        if(i % 2)
+        exchange_flag = FALSE;
+        for(int j = sorted_left; j < sorted_right; ++j)
         {
-            for(int j = sorted_left; j < sorted_right; ++j)
+            if(array[j] > array[j + 1])
             {
-                if(array[j] > array[j + 1])
-                {
-                    swap(&array[j], &array[j + 1]);
-                    exchange_flag = FALSE;
-                    last_exchange_index = j;
-                }
+                swap(&array[j], &array[j + 1]);
+                exchange_flag = TRUE;
+                last_exchange_index = j;
             }
-            sorted_right = last_exchange_index;
         }
-        else
+        sorted_right = last_exchange_index;
+        for(int k = sorted_right; k > sorted_left; --k)
         {
-            for(int k = sorted_right; k > sorted_left; --k)
+            if(array[k] < array[k - 1])
             {
-                if(array[k] < array[k - 1])
-                {
-                    swap(&array[k], &array[k - 1]);
-                    exchange_flag = FALSE;
-                    last_exchange_index = k;
-                }
+                swap(&array[k], &array[k - 1]);
+                exchange_flag = TRUE;
+                last_exchange_index = k;
             }
-            sorted_left = last_exchange_index;
         }
-        if(exchange_flag)
-            break;
+        sorted_left = last_exchange_index;
     }
 }
 
+
+/*  奇偶排序  时间复杂度： n^2    稳定性：稳定  */
+void oddEvenSort(int *array, int len)
+{
+    bool exchange_flag = TRUE;
+    while(exchange_flag)
+    {
+        exchange_flag = FALSE;
+        for(int i = 0; i < len - 1; i+=2)
+        {
+            if(array[i] > array[i + 1])
+            {
+                swap(&array[i], &array[i + 1]);
+                exchange_flag = TRUE;
+            }
+        }
+        for(int j = 1; j < len - 1; j += 2)
+        {
+            if(array[j] > array[j + 1])
+            {
+                swap(&array[j], &array[j + 1]);
+                exchange_flag = TRUE;
+            }
+        }
+    }
+}
+
+/* 地精排序  时间复杂度：n^2  稳定性： 稳定*/
+void gnomeSort(int *array, int len)
+{
+    int i = 0;
+    while(i < len)
+    {
+        if(i == 0 || array[i] >= array[i - 1])
+            ++i;
+        else
+        {
+            swap(&array[i], &array[i - 1]);
+            --i;
+        }
+    }
+}
 
 
 //  选择排序 时间复杂度：O(n^2) 稳定性：不稳定
@@ -106,7 +141,7 @@ void selectSort(int *array, int array_length)
     {
         min = i;
         for(int j = i + 1; j < array_length; ++j)
-            if(array[min]>array[j])
+            if(array[min] > array[j])
                 min = j;
         temp = array[i];
         array[i] = array[min];
@@ -114,7 +149,7 @@ void selectSort(int *array, int array_length)
     }
 }
 
-//  快速排序 时间复杂度：O(n*logn)   稳定行：不稳定  分治
+//  快速排序 时间复杂度：n^2 / n*logn / n*logn  稳定行：不稳定  分治
 void quickSort(int *array, int begin, int end)
 {
     if(begin > end - 1)
@@ -147,6 +182,7 @@ void quickSort(int *array, int begin, int end)
     quickSort(array, begin, left_index);
     quickSort(array, right_index + 1, end);
 }
+
 
 //  插入排序 时间复杂度：O(n^2)   稳定性：稳定
 void insertSort(int *array, int array_length)
@@ -276,6 +312,8 @@ void heapSort(int *array, int begin, int end)
 //  归并排序  时间复杂度：O(n * logn)  稳定性： 稳定
 void mergeSortOrder(int *array, int begin, int mid, int end)
 {
+    if(begin > end - 1)
+        return;
 //    printf("小范围排序：");
 //    printf("%d %d %d\n", begin, mid, end);
     int *pBuf = (int *)malloc(sizeof(int) * (end - begin));
@@ -438,6 +476,8 @@ struct Node *nodeInsertSort(struct Node *list)
 
 void bucketSort(int *array, int array_length)
 {
+    if(array_length < 2)
+        return;
     int i, j;
     int min = getMinData(array, array_length);
     int interval = (getMaxData(array, array_length) - min) / NBUCKET + 1; // 分开桶子
@@ -507,7 +547,44 @@ void bucketSort(int *array, int array_length)
     free(buckets);
 }
 
+/*
+ 计数排序 不比较
+ 适用于数据比较密集 而且重复率比较大的数组
+ 优势在于在对一定范围内的整数排序时，它的复杂度为Ο(n+k)（其中k是整数的范围），快于任何比较排序算法。
+ 当然这是一种牺牲空间换取时间的做法，而且当O(k)>O(nlog(n))的时候其效率反而不如基于比较的排序
+ （基于比较的排序的时间复杂度在理论上的下限是O(nlog(n)), 如归并排序，堆排序）
 
+ */
+
+void countingSort(int *array, int len)
+{
+    if(len < 2)
+        return;
+    int size = 0;
+    int max = getMaxData(array, len);
+    int min = getMinData(array, len);
+    size = max - min + 1;
+    int *array_temp = (int *)malloc(sizeof(int) * size);
+//    printf("size = %d\n", size);
+    memset(array_temp, 0, sizeof(int) * size);
+//    printArray(array_temp, size);
+    for(int i = 0; i < len; ++i)
+    {
+        array_temp[array[i] - min]++;
+    }
+//    printArray(array_temp, size);
+    int temp = 0;
+    for(int j = 0; j < len; ++j)
+    {
+        
+        while(array_temp[j + temp] == 0)
+        {
+            temp++;
+        }
+        array[j] = j + temp + min;
+        array_temp[j + temp]--;
+    }
+}
 
 
 int main(int argc, const char * argv[])
@@ -515,13 +592,15 @@ int main(int argc, const char * argv[])
     // 排序结果都为从小到大
     int a[] = {21,125,-1,49,9,37,27,43,-41,45};
     int length = sizeof(a) / sizeof(int);
-    
+
     printf("元素个数为： %d\n", length);
     printf("原始数组元素:\n");
     printArray(a, length);
     printf("\n--------------------------\n");
 //    bubbleSort(a, length);
-    cocktailSort(a, length);
+//    cocktailSort(a, length);
+//    oddEvenSort(a, length);
+//    gnomeSort(a, length);
 //    selectSort(a, length);
 //    quickSort(a, 0, length - 1);
 //    insertSort(a, length);
@@ -529,6 +608,7 @@ int main(int argc, const char * argv[])
 //    heapSort(a, 0, length - 1);
 //    mergeSort(a, 0, length - 1);
 //    bucketSort(a, length);
+    countingSort(a, length);
 
     printf("--------------------------\n");
     printf("排序后元素的顺序:\n");
@@ -536,6 +616,3 @@ int main(int argc, const char * argv[])
     printf("\n--------------------------\n");
     return 0;
 }
-
-
-
