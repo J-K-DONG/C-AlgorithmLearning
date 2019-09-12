@@ -1,5 +1,5 @@
 //
-//  main.c
+//  Sort.c
 //  Algorithm
 //
 //  Created by JK DONG on 2019/7/24.
@@ -10,11 +10,11 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-typedef int bool;
+typedef int bool;  //定义TRUE。FALSE
 #define TRUE 1;
 #define FALSE 0;
 
-
+/*  用指针交换两个元素  */
 void swap(int *a, int *b)
 {
     int tmp = *a;
@@ -29,11 +29,11 @@ void bubbleSort(int *array, int array_length)
         return;
     int temp = 0;
     int last_exchange_index = 0; // 上一次交换的位置
-    int sorted_board = array_length - 1; // 排序边界
-    bool exchange_flag = TRUE; // 判断每一轮排序是否有交换位置（TRUE没有，FALSE有） 如果有，说明排序还在进行 没有，说明排序完成
+    int sorted_board = array_length - 1; // 每次扫描的右边界
+    bool exchange_flag = TRUE; // 判断每一轮排序是否有交换位置（TRUE没有，FALSE有） 如果有，说明排序还在进行 没有，说明本轮排序完成
     for(int i = 0; i < array_length; ++i)
     {
-        exchange_flag = TRUE; // 没有交换位置
+        exchange_flag = TRUE; // 没有交换位置  （初始化）
         for(int j = 0; j < sorted_board; ++j)
         {
             if(array[j] > array[j + 1])
@@ -59,21 +59,21 @@ void cocktailSort(int *array, int len)
     int sorted_left = 0;
     int sorted_right = len - 1;
     int last_exchange_index = 0;
-    bool exchange_flag = TRUE;
+    bool exchange_flag = TRUE;  //判断是否有交换 TRUE有 FALSE 没有
     while(exchange_flag)
     {
-        exchange_flag = FALSE;
-        for(int j = sorted_left; j < sorted_right; ++j)
+        exchange_flag = FALSE; //每次循环前置零
+        for(int j = sorted_left; j < sorted_right; ++j) // 左到右
         {
             if(array[j] > array[j + 1])
             {
                 swap(&array[j], &array[j + 1]);
-                exchange_flag = TRUE;
+                exchange_flag = TRUE; //表示本次循环有交换
                 last_exchange_index = j;
             }
         }
-        sorted_right = last_exchange_index;
-        for(int k = sorted_right; k > sorted_left; --k)
+        sorted_right = last_exchange_index; // 设置右边界
+        for(int k = sorted_right; k > sorted_left; --k)  //右到左
         {
             if(array[k] < array[k - 1])
             {
@@ -82,7 +82,7 @@ void cocktailSort(int *array, int len)
                 last_exchange_index = k;
             }
         }
-        sorted_left = last_exchange_index;
+        sorted_left = last_exchange_index;  // 设置左边界
     }
 }
 
@@ -94,7 +94,7 @@ void oddEvenSort(int *array, int len)
     while(exchange_flag)
     {
         exchange_flag = FALSE;
-        for(int i = 0; i < len - 1; i+=2)
+        for(int i = 0; i < len - 1; i+=2)  // 先排偶数
         {
             if(array[i] > array[i + 1])
             {
@@ -102,7 +102,7 @@ void oddEvenSort(int *array, int len)
                 exchange_flag = TRUE;
             }
         }
-        for(int j = 1; j < len - 1; j += 2)
+        for(int j = 1; j < len - 1; j += 2)  // 再排奇数
         {
             if(array[j] > array[j + 1])
             {
@@ -121,7 +121,7 @@ void gnomeSort(int *array, int len)
     {
         if(i == 0 || array[i] >= array[i - 1])
             ++i;
-        else
+        else  // 比前一个小再交换
         {
             swap(&array[i], &array[i - 1]);
             --i;
@@ -140,10 +140,10 @@ void selectSort(int *array, int array_length)
     for(int i = 0; i < array_length; ++i)
     {
         min = i;
-        for(int j = i + 1; j < array_length; ++j)
+        for(int j = i + 1; j < array_length; ++j) // 找到最小的
             if(array[min] > array[j])
                 min = j;
-        temp = array[i];
+        temp = array[i];  // 与当前min索引交换
         array[i] = array[min];
         array[min] = temp;
     }
