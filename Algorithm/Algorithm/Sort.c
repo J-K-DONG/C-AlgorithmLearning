@@ -14,6 +14,71 @@ typedef int bool;  //定义TRUE。FALSE
 #define TRUE 1;
 #define FALSE 0;
 
+
+
+/*  定义单链表节点  */
+struct Node
+{
+    int data;
+    struct Node *next;
+};
+typedef struct Node pNode;
+
+
+
+/*  工具函数  */
+
+/* 传入一个桶链表的头节点  然后新创建一个指针指向它 循环输出  */
+void printBuckets(struct Node *node)
+{
+    struct Node *list = node;
+    while(list)
+    {
+        printf("%d ", list->data);
+        list = list->next;
+    }
+}
+
+/*  遍历输出链表  */
+void printList(pNode *list)
+{
+    pNode *p = list;
+    if(list == NULL)
+    {
+        return;
+    }
+    while(p)
+    {
+        printf("%d  ", p->data);
+        p = p->next;
+    }
+    printf("\n");
+}
+
+/*  取数组的最大值    */
+int getMaxData(int *array, int array_length)
+{
+    int max = array[0];
+    for(int i = 1; i < array_length; ++i)
+    {
+        if(array[i] > max)
+            max = array[i];
+    }
+    return max;
+}
+
+/*  取数组的最小值   */
+int getMinData(int *array, int array_length)
+{
+    int min = array[0];
+    for(int i = 1; i < array_length; ++i)
+    {
+        if(array[i] < min)
+            min = array[i];
+    }
+    return min;
+}
+
 /*  用指针交换两个元素  */
 void swap(int *a, int *b)
 {
@@ -21,6 +86,68 @@ void swap(int *a, int *b)
     *a = *b;
     *b = tmp;
 }
+
+/*  找到链表中的前驱节点  */
+pNode *findPreNode(pNode *head, pNode *p)
+{
+    if(!p)
+        return NULL;
+    pNode *preNode = head;
+    while(preNode->next != p)
+    {
+        preNode= preNode->next;
+    }
+    return preNode;
+}
+
+/*   默认是带头节点的单链表   */
+/*  两个节点进行位置交换  */
+void swapNode(pNode *head, pNode *p, pNode *q)
+{
+    if(!q || !p || p == head || q == head)
+        return;
+    
+    pNode *pPre = findPreNode(head, p);
+    pNode *qPre = findPreNode(head, q);
+    pNode *pSuc, *qSuc;
+    
+    /*  两节点相邻 p 是 q 的前驱节点  */
+    if(p->next ==  q)
+    {
+        p->next = q->next;
+        pPre->next = q;
+        q->next = p;
+    }
+    /*   q 是 p 的前驱节点   */
+    else if(q->next == p)
+    {
+        q->next = p->next;
+        qPre->next = p;
+        p->next = q;
+    }
+    /*  两个节点不相邻  */
+    else
+    {
+        if(!q->next)
+            qSuc = NULL;
+        else
+            qSuc = q->next;
+        if(!p->next)
+            pSuc = NULL;
+        else
+            pSuc = p->next;
+        
+        pPre->next = q;
+        q->next = pSuc;
+        qPre->next = p;
+        p->next = qSuc;
+    }
+}
+
+
+
+
+
 
 //   冒泡排序+优化  时间复杂度：n^2 / n / n^2   稳定性：稳定
 void bubbleSort(int *array, int array_length)
@@ -52,6 +179,51 @@ void bubbleSort(int *array, int array_length)
     }
 }
 
+/*  冒泡排序的链表实现  */
+void bubbleSortList(pNode *head)
+{
+    if(head == NULL)
+        return;
+    pNode *p = head->next;
+    pNode *q = p->next;
+    pNode *r = head;
+    pNode *sort_border = NULL;
+    bool flag = TRUE;
+
+    /*  每次循环比较交换的最后一个节点  */
+    pNode *last_exchange = NULL;
+    pNode *pTemp, *qTemp;
+    while(r)
+    {
+        flag = TRUE;
+        while(q != sort_border)
+        {
+            printf("1111111\n");
+            if(p->data > q->data)
+            {
+                printf("exchange %d and %d\n", p->data, q->data);
+                pTemp = p;
+                qTemp = q;
+                swapNode(head, p, q);
+                p = qTemp;
+                q = pTemp;
+                flag = FALSE;
+                last_exchange = q;
+                printf("last exchange node`s data is %d\n", last_exchange->data);
+            }
+            p = p->next;
+            q = q->next;
+            printList(head->next);
+        }
+        if(flag)
+            break;
+        
+        sort_border = last_exchange;
+        p = head->next;
+        q = p->next;
+        r = r->next;
+    }
+}
 
 /*   鸡尾酒排序 ： 时间复杂度： n^2 / n / n^2   稳定性： 稳定*/
 void cocktailSort(int *array, int len)
@@ -381,44 +553,6 @@ void printArray(int *array, int array_length)
 
 #define NBUCKET 5 /* bucket number */
 
-struct Node
-{
-    int data;
-    struct Node *next;
-};
-
-//  传入一个桶链表的头节点  然后新创建一个指针指向它 循环输出
-void printBuckets(struct Node *node)
-{
-    struct Node *list = node;
-    while(list)
-    {
-        printf("%d ", list->data);
-        list = list->next;
-    }
-}
-
-int getMaxData(int *array, int array_length)
-{
-    int max = array[0];
-    for(int i = 1; i < array_length; ++i)
-    {
-        if(array[i] > max)
-            max = array[i];
-    }
-    return max;
-}
-
-int getMinData(int *array, int array_length)
-{
-    int min = array[0];
-    for(int i = 1; i < array_length; ++i)
-    {
-        if(array[i] < min)
-            min = array[i];
-    }
-    return min;
-}
 
 /*  对桶中的元素排序  */
 struct Node *nodeInsertSort(struct Node *list)
@@ -587,19 +721,43 @@ void countingSort(int *array, int len)
 }
 
 
+
 int main(int argc, const char * argv[])
 {
     // 排序结果都为从小到大
     int a[] = {21,125,-1,49,9,37,27,43,-41,45};
     int length = sizeof(a) / sizeof(int);
-
+    pNode *head = (pNode *)malloc(sizeof(pNode));
+    head->next = NULL;
+    pNode *p;
+    p = head;
+    
+    for(int i = 0; i < length; ++i)
+    {
+        pNode *q = (pNode *)malloc(sizeof(pNode));
+        q->data = a[i];
+        p->next = q;
+        p = q;
+    }
+    p->next = NULL;
+    
+    printList(head->next);
+    
     printf("元素个数为： %d\n", length);
     printf("原始数组元素:\n");
     printArray(a, length);
     printf("\n--------------------------\n");
+    
+    
 //    bubbleSort(a, length);
+    bubbleSortList(head);
+    
 //    cocktailSort(a, length);
+//    cocktailSortList(head);
+    
 //    oddEvenSort(a, length);
+    
+    
 //    gnomeSort(a, length);
 //    selectSort(a, length);
 //    quickSort(a, 0, length - 1);
@@ -608,11 +766,12 @@ int main(int argc, const char * argv[])
 //    heapSort(a, 0, length - 1);
 //    mergeSort(a, 0, length - 1);
 //    bucketSort(a, length);
-    countingSort(a, length);
+//    countingSort(a, length);
 
     printf("--------------------------\n");
     printf("排序后元素的顺序:\n");
-    printArray(a, length);
+//    printArray(a, length);
+    printList(head->next);
     printf("\n--------------------------\n");
     return 0;
 }
