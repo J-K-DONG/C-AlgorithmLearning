@@ -24,36 +24,15 @@ struct Node
 };
 typedef struct Node pNode;
 
+/*
+ 前驱节点 predecessor node
+ 后继节点 successor node
+ */
 
 
-/*  工具函数  */
-
-/* 传入一个桶链表的头节点  然后新创建一个指针指向它 循环输出  */
-void printBuckets(struct Node *node)
-{
-    struct Node *list = node;
-    while(list)
-    {
-        printf("%d ", list->data);
-        list = list->next;
-    }
-}
-
-/*  遍历输出链表  */
-void printList(pNode *list)
-{
-    pNode *p = list;
-    if(list == NULL)
-    {
-        return;
-    }
-    while(p)
-    {
-        printf("%d  ", p->data);
-        p = p->next;
-    }
-    printf("\n");
-}
+//=============================================================
+//                         工具函数
+//=============================================================
 
 /*  取数组的最大值    */
 int getMaxData(int *array, int array_length)
@@ -90,7 +69,7 @@ void swap(int *a, int *b)
 /*  找到链表中的前驱节点  */
 pNode *findPreNode(pNode *head, pNode *p)
 {
-    if(!p)
+    if(!p || p == head)
         return NULL;
     pNode *preNode = head;
     while(preNode->next != p)
@@ -104,7 +83,7 @@ pNode *findPreNode(pNode *head, pNode *p)
 /*  两个节点进行位置交换  */
 void swapNode(pNode *head, pNode *p, pNode *q)
 {
-    if(!q || !p || p == head || q == head)
+    if(!q || !p || p == head || q == head || p == q)
         return;
     
     pNode *pPre = findPreNode(head, p);
@@ -144,9 +123,39 @@ void swapNode(pNode *head, pNode *p, pNode *q)
     }
 }
 
+/* 传入一个桶链表的头节点  然后新创建一个指针指向它 循环输出  */
+void printBuckets(struct Node *node)
+{
+    struct Node *list = node;
+    while(list)
+    {
+        printf("%d ", list->data);
+        list = list->next;
+    }
+}
+
+/*  遍历输出链表  */
+void printList(pNode *list)
+{
+    pNode *p = list;
+    if(list == NULL)
+    {
+        return;
+    }
+    while(p)
+    {
+        printf("%d  ", p->data);
+        p = p->next;
+    }
+    printf("\n");
+}
 
 
 
+
+//=============================================================
+//                         排序函数
+//=============================================================
 
 
 //   冒泡排序+优化  时间复杂度：n^2 / n / n^2   稳定性：稳定
@@ -182,48 +191,46 @@ void bubbleSort(int *array, int array_length)
 /*  冒泡排序的链表实现  */
 void bubbleSortList(pNode *head)
 {
-    if(head == NULL)
+    if(!head || !head->next)
         return;
     pNode *p = head->next;
     pNode *q = p->next;
-    pNode *r = head;
-    pNode *sort_border = NULL;
-    bool flag = TRUE;
+    pNode *pTemp, *qTemp;
+    
+    /*  是否完成排序 FALSE（否） TRUE（是）  */
+    bool flag = FALSE;
 
     /*  每次循环比较交换的最后一个节点  */
     pNode *last_exchange = NULL;
-    pNode *pTemp, *qTemp;
-    while(r)
+    pNode *sort_border = NULL;
+    while(!flag)
     {
         flag = TRUE;
         while(q != sort_border)
         {
-            printf("1111111\n");
+//            printf("1111111\n");
             if(p->data > q->data)
             {
-                printf("exchange %d and %d\n", p->data, q->data);
+//                printf("exchange %d and %d\n", p->data, q->data);
                 pTemp = p;
                 qTemp = q;
                 swapNode(head, p, q);
                 p = qTemp;
                 q = pTemp;
-                flag = FALSE;
-                last_exchange = q;
-                printf("last exchange node`s data is %d\n", last_exchange->data);
+                flag = FALSE;  // 本次有交换 说明排序未完成
+                last_exchange = q;  // 记录最后一次交换的后一个节点
+//                printf("last exchange node`s data is %d\n", last_exchange->data);
             }
             p = p->next;
             q = q->next;
-            printList(head->next);
+//            printList(head->next);
         }
-        if(flag)
-            break;
-        
-        sort_border = last_exchange;
-        p = head->next;
+        sort_border = last_exchange;  // 记为下一次排序的边界
+        p = head->next;  // 重置指针
         q = p->next;
-        r = r->next;
     }
 }
+
 
 /*   鸡尾酒排序 ： 时间复杂度： n^2 / n / n^2   稳定性： 稳定*/
 void cocktailSort(int *array, int len)
@@ -258,6 +265,12 @@ void cocktailSort(int *array, int len)
     }
 }
 
+void cocktailSortList(pNode *head)
+{
+    if(!head || !head->next)
+        return;
+    
+}
 
 /*  奇偶排序  时间复杂度： n^2    稳定性：稳定  */
 void oddEvenSort(int *array, int len)
@@ -726,6 +739,7 @@ int main(int argc, const char * argv[])
 {
     // 排序结果都为从小到大
     int a[] = {21,125,-1,49,9,37,27,43,-41,45};
+    int a[] = {};
     int length = sizeof(a) / sizeof(int);
     pNode *head = (pNode *)malloc(sizeof(pNode));
     head->next = NULL;
