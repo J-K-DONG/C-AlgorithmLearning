@@ -15,23 +15,8 @@ typedef int bool;  //定义TRUE。FALSE
 #define FALSE 0;
 
 
-
-/*  定义单链表节点  */
-struct Node
-{
-    int data;
-    struct Node *next;
-};
-typedef struct Node pNode;
-
-/*
- 前驱节点 predecessor node
- 后继节点 successor node
- */
-
-
 //=============================================================
-//                         工具函数
+//                         数组工具函数
 //=============================================================
 
 /*  取数组的最大值    */
@@ -66,6 +51,64 @@ void swap(int *a, int *b)
     *b = tmp;
 }
 
+
+//=============================================================
+//                         单链表工具函数
+//=============================================================
+
+
+/*  定义单链表节点  */
+struct Node
+{
+    int data;
+    struct Node *next;
+};
+typedef struct Node pNode;
+
+
+/*
+ 前驱节点 predecessor node
+ 后继节点 successor node
+ */
+
+
+/*  遍历输出链表  */
+void printList(pNode *head)
+{
+    if(!head || !head->next)
+        return;
+    pNode *p = head->next;
+    while(p)
+    {
+        printf("%d  ", p->data);
+        p = p->next;
+    }
+    printf("\n");
+}
+
+/*  创建单链表  */
+pNode *createList(int *array, int len)
+{
+    if(len < 1)
+        return NULL;
+    pNode *head = (pNode *)malloc(sizeof(pNode));
+    head->data = 0;
+    head->next = NULL;
+    pNode *p = head;
+     printf("构造单向链表：\n");
+    for(int i = 0; i < len; ++i)
+    {
+        pNode *q = (pNode *)malloc(sizeof(pNode));
+        q->data = array[i];
+        p->next = q;
+        p = q;
+    }
+    p->next = NULL;
+    printList(head);
+    return head;
+}
+
+
 /*  找到链表中的前驱节点  */
 pNode *findPreNode(pNode *head, pNode *p)
 {
@@ -88,7 +131,8 @@ void swapNode(pNode *head, pNode *p, pNode *q)
     
     pNode *pPre = findPreNode(head, p);
     pNode *qPre = findPreNode(head, q);
-    pNode *pSuc, *qSuc;
+    pNode *pSuc = NULL;
+    pNode *qSuc = NULL;
     
     /*  两节点相邻 p 是 q 的前驱节点  */
     if(p->next ==  q)
@@ -107,14 +151,14 @@ void swapNode(pNode *head, pNode *p, pNode *q)
     /*  两个节点不相邻  */
     else
     {
-        if(!q->next)
-            qSuc = NULL;
-        else
-            qSuc = q->next;
-        if(!p->next)
-            pSuc = NULL;
-        else
-            pSuc = p->next;
+//        if(!q->next)
+//            qSuc = NULL;
+//        else
+//            qSuc = q->next;
+//        if(!p->next)
+//            pSuc = NULL;
+//        else
+//            pSuc = p->next;
         
         pPre->next = q;
         q->next = pSuc;
@@ -127,6 +171,7 @@ void swapNode(pNode *head, pNode *p, pNode *q)
 void printBuckets(struct Node *node)
 {
     struct Node *list = node;
+    
     while(list)
     {
         printf("%d ", list->data);
@@ -134,21 +179,109 @@ void printBuckets(struct Node *node)
     }
 }
 
-/*  遍历输出链表  */
-void printList(pNode *list)
+
+
+//=============================================================
+//                         双向链表工具函数
+//=============================================================
+
+/*  定义双向链表的节点  */
+typedef struct DNode
 {
-    pNode *p = list;
-    if(list == NULL)
-    {
+    int data;
+    struct DNode *prior, *next;
+}DNode;
+
+/*  循环l遍历双向链表并输出  */
+void printDlist(DNode *head)
+{
+    if(!head || !head->next)
         return;
-    }
-    while(p)
+    DNode *node = head->next;
+    while(node)
     {
-        printf("%d  ", p->data);
-        p = p->next;
+        printf("%d  ", node->data);
+        node = node->next;
     }
     printf("\n");
 }
+
+
+DNode *createDList(int *array, int len)
+{
+    if(len < 1)
+        return NULL;
+    DNode *head = (DNode *)malloc(sizeof(DNode));
+    DNode *p = (DNode *)malloc(sizeof(DNode));
+    head->data = 0;
+    head->prior = NULL;
+    head->next = p;
+    p->data = array[0];
+    p->prior = head;
+    p->next = NULL;
+    if(len == 1)
+        return head;
+    
+    for(int i = 1; i < len; ++i)
+    {
+        DNode *q = (DNode *)malloc(sizeof(DNode));
+        q->data = array[i];
+        q->prior = p;
+        p->next = q;
+        q->next = NULL;
+        p = q;
+    }
+    printDlist(head);
+    return head;
+}
+
+/*  交换双向列表中的两个节点  */
+void swapDNode(DNode *head, DNode *p, DNode *q)
+{
+    if(!p || !q || p == q || p == head || q == head)
+    {
+        printf("交换失败“\n");
+        return;
+    }
+    DNode *pPrior = p->prior;  // p 的前驱节点
+    DNode *pNext = p->next;  // p 的后继节点
+    DNode *qPrior = q->prior;  // q 的前驱节点
+    DNode *qNext = q->next;  // q 的后继节点
+    if(pNext == q)
+    {
+        pPrior->next = q;
+        q->prior = pPrior;
+        q->next = p;
+        p->prior = q;
+        p->next = qNext;
+        if(qNext)
+            qNext->prior = p;
+    }
+    else if(qNext == p)
+    {
+        qPrior->next = p;
+        p->prior = q;
+        p->next = q;
+        q->prior = p;
+        q->next = pNext;
+        if(pNext)
+            pNext->prior = q;
+    }
+    else{
+        pPrior->next = q;
+        q->prior = pPrior;
+        q->next = pNext;
+        if(pNext)
+            pNext->prior = q;
+        qPrior->next = p;
+        p->prior = qPrior;
+        p->next = qNext;
+        if(qNext)
+            qNext->prior = p;
+    }
+}
+
+
 
 
 
@@ -166,10 +299,10 @@ void bubbleSort(int *array, int array_length)
     int temp = 0;
     int last_exchange_index = 0; // 上一次交换的位置
     int sorted_board = array_length - 1; // 每次扫描的右边界
-    bool exchange_flag = TRUE; // 判断每一轮排序是否有交换位置（TRUE没有，FALSE有） 如果有，说明排序还在进行 没有，说明本轮排序完成
+    bool exchange_flag = TRUE; // 判断每一轮排序是否有交换位置（TRUE有交换 表明排序还在进行，FALSE没有交换 表明排序未完成）
     for(int i = 0; i < array_length; ++i)
     {
-        exchange_flag = TRUE; // 没有交换位置  （初始化）
+        exchange_flag = FALSE; // 没有交换位置  （初始化本次循环 ）
         for(int j = 0; j < sorted_board; ++j)
         {
             if(array[j] > array[j + 1])
@@ -178,11 +311,11 @@ void bubbleSort(int *array, int array_length)
                 array[j + 1] = array[j];
                 array[j] = temp;
                 last_exchange_index = j; //k记录上一次交换的位置
-                exchange_flag = FALSE; // 有交换位置
+                exchange_flag = TRUE; // 有交换位置
             }
         }
         sorted_board = last_exchange_index; //赋值给下一轮排序的边界值
-        if(exchange_flag){
+        if(!exchange_flag){
             break;
         }
     }
@@ -195,29 +328,29 @@ void bubbleSortList(pNode *head)
         return;
     pNode *p = head->next;
     pNode *q = p->next;
-    pNode *pTemp, *qTemp;
+    pNode *temp;
     
-    /*  是否完成排序 FALSE（否） TRUE（是）  */
-    bool flag = FALSE;
+    /*  是否有交换  FALSE（无交换 表示排序完成） TRUE（有交换 表示排序未完成）  */
+    bool flag = TRUE;
 
     /*  每次循环比较交换的最后一个节点  */
     pNode *last_exchange = NULL;
     pNode *sort_border = NULL;
-    while(!flag)
+    while(flag)
     {
-        flag = TRUE;
+        flag = FALSE;
         while(q != sort_border)
         {
-//            printf("1111111\n");
+            printf("1111111\n");
             if(p->data > q->data)
             {
 //                printf("exchange %d and %d\n", p->data, q->data);
-                pTemp = p;
-                qTemp = q;
+
                 swapNode(head, p, q);
-                p = qTemp;
-                q = pTemp;
-                flag = FALSE;  // 本次有交换 说明排序未完成
+                temp = p;
+                p = q;
+                q = temp;
+                flag = TRUE;  // 本次有交换 说明排序未完成
                 last_exchange = q;  // 记录最后一次交换的后一个节点
 //                printf("last exchange node`s data is %d\n", last_exchange->data);
             }
@@ -265,10 +398,69 @@ void cocktailSort(int *array, int len)
     }
 }
 
-void cocktailSortList(pNode *head)
+void cocktailSortList(DNode *head)
 {
     if(!head || !head->next)
         return;
+    DNode *p = head->next;
+    DNode *q = p->next;
+    DNode *sorted_left = head;
+    DNode *temp = NULL;
+    DNode *sorted_right = NULL;
+    DNode *last_exchange = NULL;
+    bool flag = TRUE;
+    
+    while(flag)
+    {
+        flag = FALSE;
+        while(q != sorted_right)
+        {
+            if(p->data > q->data)
+            {
+//                printf("1111111\n");
+//                printf("left to right exchange %d and %d\n", p->data, q->data);
+                swapDNode(head, p, q);
+                temp = p;
+                p = q;
+                q = temp;
+                flag = TRUE;
+                last_exchange = q;
+//                printDlist(head);
+            }
+            p = p->next;  // 指针后移一个节点
+            q = p->next;
+        }
+        if(flag)  // 排序未完成 则修改指针
+        {
+            sorted_right = last_exchange;
+            p = sorted_right->prior->prior;  // p 指向本次排序边界的前个节点
+            q = p->next;
+        }
+        while(p != sorted_left)
+        {
+            if(p->data > q->data)
+            {
+//                printf("right to left exchange %d and %d\n", p->data, q->data);
+//                printf("sorted_left is : %d\n", sorted_left->data);
+                swapDNode(head, p, q);
+                temp = p;
+                p = q;
+                q = temp;
+                flag = TRUE;
+                last_exchange = p;
+//                printDlist(head);
+            }
+            p = p->prior;  // 指针前移一个节点
+            q = p->next;
+        }
+        if(flag)  // 排序未完成 则修改指针
+        {
+            sorted_left = last_exchange;
+            p = sorted_left->next;
+            q = p->next;
+//            printf("p->data%d  q->data%d\n", p->data, q->data);
+        }
+    }
     
 }
 
@@ -739,37 +931,27 @@ int main(int argc, const char * argv[])
 {
     // 排序结果都为从小到大
     int a[] = {21,125,-1,49,9,37,27,43,-41,45};
-    int a[] = {};
+//    int a[] = {};
     int length = sizeof(a) / sizeof(int);
-    pNode *head = (pNode *)malloc(sizeof(pNode));
-    head->next = NULL;
-    pNode *p;
-    p = head;
-    
-    for(int i = 0; i < length; ++i)
-    {
-        pNode *q = (pNode *)malloc(sizeof(pNode));
-        q->data = a[i];
-        p->next = q;
-        p = q;
-    }
-    p->next = NULL;
-    
-    printList(head->next);
     
     printf("元素个数为： %d\n", length);
     printf("原始数组元素:\n");
     printArray(a, length);
     printf("\n--------------------------\n");
     
+    pNode *SHead = createList(a, length);
+    DNode *DHead = createDList(a, length);
+    
+    
+    
     
 //    bubbleSort(a, length);
-    bubbleSortList(head);
+    bubbleSortList(SHead);
     
 //    cocktailSort(a, length);
-//    cocktailSortList(head);
+//    cocktailSortList(DHead);
     
-//    oddEvenSort(a, length);
+//    oddEvenSort(a, length);t
     
     
 //    gnomeSort(a, length);
@@ -785,7 +967,11 @@ int main(int argc, const char * argv[])
     printf("--------------------------\n");
     printf("排序后元素的顺序:\n");
 //    printArray(a, length);
-    printList(head->next);
+    printList(SHead);
+//    printDlist(DHead);
     printf("\n--------------------------\n");
     return 0;
+    
 }
+
+
