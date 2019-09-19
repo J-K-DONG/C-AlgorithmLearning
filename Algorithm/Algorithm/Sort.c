@@ -14,10 +14,9 @@ typedef int bool;  //定义TRUE。FALSE
 #define TRUE 1;
 #define FALSE 0;
 
-
-//=============================================================
-//                         数组工具函数
-//=============================================================
+//========================================================================================
+//                                     数组工具函数
+//========================================================================================
 
 /*  取数组的最大值    */
 int getMaxData(int *array, int array_length)
@@ -52,9 +51,9 @@ void swap(int *a, int *b)
 }
 
 
-//=============================================================
-//                         单链表工具函数
-//=============================================================
+//========================================================================================
+//                                     单链表工具函数
+//========================================================================================
 
 
 /*  定义单链表节点  */
@@ -63,7 +62,7 @@ struct Node
     int data;
     struct Node *next;
 };
-typedef struct Node pNode;
+typedef struct Node SNode;
 
 
 /*
@@ -73,11 +72,11 @@ typedef struct Node pNode;
 
 
 /*  遍历输出链表  */
-void printList(pNode *head)
+void printSList(SNode *head)
 {
     if(!head || !head->next)
         return;
-    pNode *p = head->next;
+    SNode *p = head->next;
     while(p)
     {
         printf("%d  ", p->data);
@@ -87,34 +86,34 @@ void printList(pNode *head)
 }
 
 /*  创建单链表  */
-pNode *createList(int *array, int len)
+SNode *createSList(int *array, int len)
 {
     if(len < 1)
         return NULL;
-    pNode *head = (pNode *)malloc(sizeof(pNode));
+    SNode *head = (SNode *)malloc(sizeof(SNode));
     head->data = 0;
     head->next = NULL;
-    pNode *p = head;
+    SNode *p = head;
      printf("构造单向链表：\n");
     for(int i = 0; i < len; ++i)
     {
-        pNode *q = (pNode *)malloc(sizeof(pNode));
+        SNode *q = (SNode *)malloc(sizeof(SNode));
         q->data = array[i];
         p->next = q;
         p = q;
     }
     p->next = NULL;
-    printList(head);
+    printSList(head);
     return head;
 }
 
 
 /*  找到链表中的前驱节点  */
-pNode *findPreNode(pNode *head, pNode *p)
+SNode *findPreNode(SNode *head, SNode *p)
 {
     if(!p || p == head)
         return NULL;
-    pNode *preNode = head;
+    SNode *preNode = head;
     while(preNode->next != p)
     {
         preNode= preNode->next;
@@ -124,15 +123,15 @@ pNode *findPreNode(pNode *head, pNode *p)
 
 /*   默认是带头节点的单链表   */
 /*  两个节点进行位置交换  */
-void swapNode(pNode *head, pNode *p, pNode *q)
+void swapSNode(SNode *head, SNode *p, SNode *q)
 {
     if(!q || !p || p == head || q == head || p == q)
         return;
     
-    pNode *pPre = findPreNode(head, p);
-    pNode *qPre = findPreNode(head, q);
-    pNode *pSuc = NULL;
-    pNode *qSuc = NULL;
+    SNode *pPre = findPreNode(head, p);
+    SNode *qPre = findPreNode(head, q);
+    SNode *pSuc = NULL;
+    SNode *qSuc = NULL;
     
     /*  两节点相邻 p 是 q 的前驱节点  */
     if(p->next ==  q)
@@ -180,10 +179,26 @@ void printBuckets(struct Node *node)
 }
 
 
+void freeSNode(SNode *head)
+{
+    if(!head)
+    {
+        printf("头节点为空\n");
+        return;
+    }
+    SNode *node = head->next;
+    free(head);
+    while(node)
+    {
+        SNode *temp = node;
+        node = node->next;
+        free(temp);
+    }
+}
 
-//=============================================================
-//                         双向链表工具函数
-//=============================================================
+//========================================================================================
+//                                    双向链表工具函数
+//========================================================================================
 
 /*  定义双向链表的节点  */
 typedef struct DNode
@@ -286,9 +301,9 @@ void swapDNode(DNode *head, DNode *p, DNode *q)
 
 
 
-//=============================================================
-//                         排序函数
-//=============================================================
+//========================================================================================
+//                                      冒泡排序
+//========================================================================================
 
 
 //   冒泡排序+优化  时间复杂度：n^2 / n / n^2   稳定性：稳定
@@ -322,31 +337,31 @@ void bubbleSort(int *array, int array_length)
 }
 
 /*  冒泡排序的链表实现  */
-void bubbleSortList(pNode *head)
+void bubbleSortList(SNode *head)
 {
     if(!head || !head->next)
         return;
-    pNode *p = head->next;
-    pNode *q = p->next;
-    pNode *temp;
+    SNode *p = head->next;
+    SNode *q = p->next;
+    SNode *temp;
     
     /*  是否有交换  FALSE（无交换 表示排序完成） TRUE（有交换 表示排序未完成）  */
     bool flag = TRUE;
 
     /*  每次循环比较交换的最后一个节点  */
-    pNode *last_exchange = NULL;
-    pNode *sort_border = NULL;
+    SNode *last_exchange = NULL;
+    SNode *sort_border = NULL;
     while(flag)
     {
         flag = FALSE;
         while(q != sort_border)
         {
-            printf("1111111\n");
+//            printf("1111111\n");
             if(p->data > q->data)
             {
 //                printf("exchange %d and %d\n", p->data, q->data);
 
-                swapNode(head, p, q);
+                swapSNode(head, p, q);
                 temp = p;
                 p = q;
                 q = temp;
@@ -364,7 +379,9 @@ void bubbleSortList(pNode *head)
     }
 }
 
-
+//========================================================================================
+//                                      鸡尾酒排序
+//========================================================================================
 /*   鸡尾酒排序 ： 时间复杂度： n^2 / n / n^2   稳定性： 稳定*/
 void cocktailSort(int *array, int len)
 {
@@ -400,7 +417,7 @@ void cocktailSort(int *array, int len)
 
 void cocktailSortList(DNode *head)
 {
-    if(!head || !head->next)
+    if(!head || !head->next )
         return;
     DNode *p = head->next;
     DNode *q = p->next;
@@ -463,6 +480,11 @@ void cocktailSortList(DNode *head)
     }
     
 }
+
+
+//========================================================================================
+//                                      奇偶排序
+//========================================================================================
 
 /*  奇偶排序  时间复杂度： n^2    稳定性：稳定  */
 void oddEvenSort(int *array, int len)
@@ -938,18 +960,21 @@ int main(int argc, const char * argv[])
     printf("原始数组元素:\n");
     printArray(a, length);
     printf("\n--------------------------\n");
-    
-    pNode *SHead = createList(a, length);
+
+//    SNode *SHead = createSList(a, length);
     DNode *DHead = createDList(a, length);
     
     
     
     
+    
+    
+    
 //    bubbleSort(a, length);
-    bubbleSortList(SHead);
+//    bubbleSortList(SHead);
     
 //    cocktailSort(a, length);
-//    cocktailSortList(DHead);
+    cocktailSortList(DHead);
     
 //    oddEvenSort(a, length);t
     
@@ -967,8 +992,13 @@ int main(int argc, const char * argv[])
     printf("--------------------------\n");
     printf("排序后元素的顺序:\n");
 //    printArray(a, length);
-    printList(SHead);
-//    printDlist(DHead);
+//    printSList(SHead);
+//    freeSNode(SHead);
+    
+
+
+
+    printDlist(DHead);
     printf("\n--------------------------\n");
     return 0;
     
