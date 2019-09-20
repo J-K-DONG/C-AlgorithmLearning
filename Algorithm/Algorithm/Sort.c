@@ -126,43 +126,47 @@ SNode *findPreNode(SNode *head, SNode *p)
 void swapSNode(SNode *head, SNode *p, SNode *q)
 {
     if(!q || !p || p == head || q == head || p == q)
+    {
+        printf("not swap\n");
         return;
+    }
     
-    SNode *pPre = findPreNode(head, p);
-    SNode *qPre = findPreNode(head, q);
-    SNode *pSuc = NULL;
-    SNode *qSuc = NULL;
+    SNode *pPrior = findPreNode(head, p);
+    SNode *qPrior = findPreNode(head, q);
+    SNode *pNext = p->next;
+    SNode *qNext = q->next;
     
     /*  两节点相邻 p 是 q 的前驱节点  */
     if(p->next ==  q)
     {
-        p->next = q->next;
-        pPre->next = q;
+        pPrior->next = q;
         q->next = p;
+        p->next = qNext;
     }
     /*   q 是 p 的前驱节点   */
     else if(q->next == p)
     {
-        q->next = p->next;
-        qPre->next = p;
+        qPrior->next = p;
         p->next = q;
+        q->next = pNext;
     }
     /*  两个节点不相邻  */
     else
     {
 //        if(!q->next)
-//            qSuc = NULL;
+//            qNext = NULL;
 //        else
-//            qSuc = q->next;
+//            qNext = q->next;
 //        if(!p->next)
-//            pSuc = NULL;
+//            pNext = NULL;
 //        else
-//            pSuc = p->next;
+//            pNext = p->next;
         
-        pPre->next = q;
-        q->next = pSuc;
-        qPre->next = p;
-        p->next = qSuc;
+        pPrior->next = q;
+        q->next = pNext;
+        qPrior->next = p;
+        p->next = qNext;
+        
     }
 }
 
@@ -275,7 +279,7 @@ void swapDNode(DNode *head, DNode *p, DNode *q)
     else if(qNext == p)
     {
         qPrior->next = p;
-        p->prior = q;
+        p->prior = qPrior;
         p->next = q;
         q->prior = p;
         q->next = pNext;
@@ -376,7 +380,6 @@ void bubbleSortSList(SNode *head)
             if(p->data > q->data)
             {
 //                printf("exchange %d and %d\n", p->data, q->data);
-
                 swapSNode(head, p, q);
                 temp = p;
                 p = q;
@@ -642,6 +645,32 @@ void selectSort(int *array, int array_length)
         array[min] = temp;
     }
 }
+
+void selectSortSList(SNode *head)
+{
+    if(!head || !head->next)
+    {
+        printf("unsorted\n");
+        return;
+    }
+    SNode *p = head->next;
+    SNode *q, *min = p;
+    while (p) {
+        q = p;
+        min = p;
+        while (q) {
+            if(min->data > q->data)
+                min = q;
+            q = q->next;
+        }
+        swapSNode(head, p, min);
+//        printf("exchange %d and %d\n", p->data, min->data);
+//        printSList(head);
+        p = min->next;
+    }
+}
+
+
 
 //  快速排序 时间复杂度：n^2 / n*logn / n*logn  稳定行：不稳定  分治
 void quickSort(int *array, int begin, int end)
@@ -1071,9 +1100,15 @@ int main(int argc, const char * argv[])
 //    oddEvenSort(a, length);t
 //    oddEvenSortSList(SHead);
     
+    
 //    gnomeSort(a, length);
-    gnomeSortDList(DHead);
+//    gnomeSortDList(DHead);
+    
+    
 //    selectSort(a, length);
+    selectSortSList(SHead);
+    
+    
 //    quickSort(a, 0, length - 1);
 //    insertSort(a, length);
 //    shellSort(a, 0, length - 1);
@@ -1087,11 +1122,11 @@ int main(int argc, const char * argv[])
     
 //    printArray(a, length);
     
-//    printSList(SHead);
-//    freeSNode(SHead);
+    printSList(SHead);
+    freeSNode(SHead);
 
-    printDlist(DHead);
-    freeDNode(DHead);
+//    printDlist(DHead);
+//    freeDNode(DHead);
 
     printf("\n--------------------------\n");
     return 0;
