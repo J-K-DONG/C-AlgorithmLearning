@@ -297,7 +297,23 @@ void swapDNode(DNode *head, DNode *p, DNode *q)
 }
 
 
-
+void freeDNode(DNode *head)
+{
+    if(!head){
+        printf("头节点为空\n");
+        return;
+    }
+    DNode *node = head;
+    DNode *temp;
+    
+    while (node) {
+        temp = node;
+        node = node->next;
+        free(temp);
+//        printf(temp->data);
+    }
+//    printf(head->data);
+}
 
 
 
@@ -577,6 +593,29 @@ void gnomeSort(int *array, int len)
         {
             swap(&array[i], &array[i - 1]);
             --i;
+        }
+    }
+}
+
+/*  地精排序的双向链表实现  */
+void gnomeSortDList(DNode *head)
+{
+    if(!head || !head->next)
+    {
+        printf("未排序\n");
+        return;
+    }
+    DNode *p = head->next;
+
+    while (p) {
+        if (p == head->next || p->data > p->prior->data) {
+            p = p->next;
+        }
+        else
+        {
+//            printf("exchange %d and %d\n", p->prior->data, p->data);
+            swapDNode(head, p->prior, p);
+//            printDlist(head);
         }
     }
 }
@@ -1018,7 +1057,7 @@ int main(int argc, const char * argv[])
     printf("\n--------------------------\n");
 
     SNode *SHead = createSList(a, length);
-//    DNode *DHead = createDList(a, length);
+    DNode *DHead = createDList(a, length);
     
     
 //    bubbleSort(a, length);
@@ -1030,9 +1069,10 @@ int main(int argc, const char * argv[])
     
     
 //    oddEvenSort(a, length);t
-    oddEvenSortSList(SHead);
+//    oddEvenSortSList(SHead);
     
 //    gnomeSort(a, length);
+    gnomeSortDList(DHead);
 //    selectSort(a, length);
 //    quickSort(a, 0, length - 1);
 //    insertSort(a, length);
@@ -1044,15 +1084,15 @@ int main(int argc, const char * argv[])
 
     printf("--------------------------\n");
     printf("排序后元素的顺序:\n");
+    
 //    printArray(a, length);
     
-    printSList(SHead);
-    freeSNode(SHead);
-    
+//    printSList(SHead);
+//    freeSNode(SHead);
 
+    printDlist(DHead);
+    freeDNode(DHead);
 
-
-//    printDlist(DHead);
     printf("\n--------------------------\n");
     return 0;
     
