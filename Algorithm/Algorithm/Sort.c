@@ -363,7 +363,6 @@ void bubbleSortSList(SNode *head)
         return;
     SNode *p = head->next;
     SNode *q = p->next;
-    SNode *temp;
     
     /*  是否有交换  FALSE（无交换 表示排序完成） TRUE（有交换 表示排序未完成）  */
     bool flag = TRUE;
@@ -376,21 +375,18 @@ void bubbleSortSList(SNode *head)
         flag = FALSE;
         while(q != sort_border)
         {
-//            printf("1111111\n");
             if(p->data > q->data)
             {
-//                printf("exchange %d and %d\n", p->data, q->data);
-                swapSNode(head, p, q);
-                temp = p;
-                p = q;
-                q = temp;
+                swapSNode(head, p, q);  // 交换完位置 q 在 p 的前面
+                q = p->next;
                 flag = TRUE;  // 本次有交换 说明排序未完成
-                last_exchange = q;  // 记录最后一次交换的后一个节点
-//                printf("last exchange node`s data is %d\n", last_exchange->data);
+                last_exchange = p;  // 记录最后一次交换的后一个节点
             }
-            p = p->next;
-            q = q->next;
-//            printList(head->next);
+            else
+            {
+                p = p->next;
+                q = q->next;
+            }
         }
         sort_border = last_exchange;  // 记为下一次排序的边界
         p = head->next;  // 重置指针
@@ -442,7 +438,6 @@ void cocktailSortDList(DNode *head)
     DNode *p = head->next;
     DNode *q = p->next;
     DNode *sorted_left = head;
-    DNode *temp = NULL;
     DNode *sorted_right = NULL;
     DNode *last_exchange = NULL;
     bool flag = TRUE;  // TRUE:排序未完成  FALSE : 排序完成
@@ -454,41 +449,37 @@ void cocktailSortDList(DNode *head)
         {
             if(p->data > q->data)
             {
-//                printf("1111111\n");
-//                printf("left to right exchange %d and %d\n", p->data, q->data);
                 swapDNode(head, p, q);
-                temp = p;
-                p = q;
-                q = temp;
-                flag = TRUE;
                 last_exchange = q;
-//                printDlist(head);
+                q = p->next;
+                flag = TRUE;
             }
-            p = p->next;  // 指针后移一个节点
-            q = p->next;
+            else
+            {
+                p = p->next;  // 指针后移一个节点
+                q = p->next;
+            }
         }
         if(flag)  // 排序未完成 则修改指针
         {
             sorted_right = last_exchange;
-            p = sorted_right->prior->prior;  // p 指向本次排序边界的前个节点
+            p = sorted_right->prior;  // p 指向本次排序边界的前个节点
             q = p->next;
         }
         while(p != sorted_left)
         {
             if(p->data > q->data)
             {
-//                printf("right to left exchange %d and %d\n", p->data, q->data);
-//                printf("sorted_left is : %d\n", sorted_left->data);
                 swapDNode(head, p, q);
-                temp = p;
-                p = q;
-                q = temp;
+                last_exchange = q;
+                p = q->prior;
                 flag = TRUE;
-                last_exchange = p;
-//                printDlist(head);
             }
-            p = p->prior;  // 指针前移一个节点
-            q = p->next;
+            else
+            {
+                p = p->prior;  // 指针前移一个节点
+                q = p->next;
+            }
         }
         if(flag)  // 排序未完成 则修改指针
         {
@@ -1094,7 +1085,7 @@ int main(int argc, const char * argv[])
     
     
 //    cocktailSort(a, length);
-//    cocktailSortDList(DHead);
+    cocktailSortDList(DHead);
     
     
 //    oddEvenSort(a, length);t
@@ -1106,7 +1097,7 @@ int main(int argc, const char * argv[])
     
     
 //    selectSort(a, length);
-    selectSortSList(SHead);
+//    selectSortSList(SHead);
     
     
 //    quickSort(a, 0, length - 1);
@@ -1122,11 +1113,11 @@ int main(int argc, const char * argv[])
     
 //    printArray(a, length);
     
-    printSList(SHead);
-    freeSNode(SHead);
+//    printSList(SHead);
+//    freeSNode(SHead);
 
-//    printDlist(DHead);
-//    freeDNode(DHead);
+    printDlist(DHead);
+    freeDNode(DHead);
 
     printf("\n--------------------------\n");
     return 0;
