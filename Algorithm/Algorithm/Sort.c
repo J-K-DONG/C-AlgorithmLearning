@@ -337,7 +337,7 @@ void bubbleSort(int *array, int array_length)
 }
 
 /*  冒泡排序的链表实现  */
-void bubbleSortList(SNode *head)
+void bubbleSortSList(SNode *head)
 {
     if(!head || !head->next)
         return;
@@ -415,7 +415,8 @@ void cocktailSort(int *array, int len)
     }
 }
 
-void cocktailSortList(DNode *head)
+/*  鸡尾酒排序的双向链表实现  */
+void cocktailSortDList(DNode *head)
 {
     if(!head || !head->next )
         return;
@@ -425,7 +426,7 @@ void cocktailSortList(DNode *head)
     DNode *temp = NULL;
     DNode *sorted_right = NULL;
     DNode *last_exchange = NULL;
-    bool flag = TRUE;
+    bool flag = TRUE;  // TRUE:排序未完成  FALSE : 排序完成
     
     while(flag)
     {
@@ -493,7 +494,7 @@ void oddEvenSort(int *array, int len)
     while(exchange_flag)
     {
         exchange_flag = FALSE;
-        for(int i = 0; i < len - 1; i+=2)  // 先排偶数
+        for(int i = 0; i < len - 1; i += 2)  // 先排偶数
         {
             if(array[i] > array[i + 1])
             {
@@ -512,6 +513,58 @@ void oddEvenSort(int *array, int len)
     }
 }
 
+/*  奇偶排序的单向链表实现  */
+void oddEvenSortSList(SNode *head)
+{
+    if(!head || !head->next)
+    {
+        printf("未排序\n");
+        return;
+    }
+    SNode *p, *q;
+    
+    bool flag = TRUE;
+    while(flag)
+    {
+        p = head->next;  // 奇数
+        q = p->next;  // 偶数
+        flag = FALSE;
+        while(p && p->next)
+        {
+            if(p->data > p->next->data)
+            {
+//                printf("odd exchange %d and %d\n", p->data, p->next->data);
+                swapSNode(head, p, p->next);
+//                printSList(head);
+                flag = TRUE;
+                p = p->next;
+            }
+            else if(p->next->next)
+                p = p->next->next;
+            else
+                break;
+        }
+        while(q && q->next)
+        {
+            if(q->data > q->next->data)
+            {
+//                printf("even exchange %d and %d\n", q->data, q->next->data);
+                swapSNode(head, q, q->next);
+                flag = TRUE;
+//                printSList(head);
+                q = q->next;
+            }
+            else if(q->next->next)
+                q = q->next->next;
+            else
+                break;
+        }
+    }
+}
+
+//========================================================================================
+//                                      地精排序
+//========================================================================================
 /* 地精排序  时间复杂度：n^2  稳定性： 稳定*/
 void gnomeSort(int *array, int len)
 {
@@ -528,6 +581,9 @@ void gnomeSort(int *array, int len)
     }
 }
 
+//========================================================================================
+//                                      选择排序
+//========================================================================================
 
 //  选择排序 时间复杂度：O(n^2) 稳定性：不稳定
 void selectSort(int *array, int array_length)
@@ -961,23 +1017,20 @@ int main(int argc, const char * argv[])
     printArray(a, length);
     printf("\n--------------------------\n");
 
-//    SNode *SHead = createSList(a, length);
-    DNode *DHead = createDList(a, length);
-    
-    
-    
-    
-    
+    SNode *SHead = createSList(a, length);
+//    DNode *DHead = createDList(a, length);
     
     
 //    bubbleSort(a, length);
-//    bubbleSortList(SHead);
+//    bubbleSortSList(SHead);
+    
     
 //    cocktailSort(a, length);
-    cocktailSortList(DHead);
+//    cocktailSortDList(DHead);
+    
     
 //    oddEvenSort(a, length);t
-    
+    oddEvenSortSList(SHead);
     
 //    gnomeSort(a, length);
 //    selectSort(a, length);
@@ -992,13 +1045,14 @@ int main(int argc, const char * argv[])
     printf("--------------------------\n");
     printf("排序后元素的顺序:\n");
 //    printArray(a, length);
-//    printSList(SHead);
-//    freeSNode(SHead);
+    
+    printSList(SHead);
+    freeSNode(SHead);
     
 
 
 
-    printDlist(DHead);
+//    printDlist(DHead);
     printf("\n--------------------------\n");
     return 0;
     
