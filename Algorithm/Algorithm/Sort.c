@@ -107,6 +107,36 @@ SNode *createSList(int *array, int len)
     return head;
 }
 
+/*  计算链表中元素的个数  */
+int getSListLen(SNode *head)
+{
+    if (!head || !head->next) {
+        printf("元素个数为0 \n");
+        return 0;
+    }
+    int len = 0;
+    SNode *temp = head->next;
+    while (temp) {
+        ++len;
+        temp = temp->next;
+    }
+    return len;
+}
+
+/*  找到尾节点  */
+SNode *getEndNodeOfSList(SNode *head)
+{
+    if (!head || !head->next) {
+        printf("链表为空。\n");
+        return NULL;
+    }
+    SNode *end = head->next;
+    while (end->next) {
+        end = end->next;
+    }
+    return end;
+}
+
 
 /*  找到链表中的前驱节点  */
 SNode *findPreNode(SNode *head, SNode *p)
@@ -153,15 +183,6 @@ void swapSNode(SNode *head, SNode *p, SNode *q)
     /*  两个节点不相邻  */
     else
     {
-//        if(!q->next)
-//            qNext = NULL;
-//        else
-//            qNext = q->next;
-//        if(!p->next)
-//            pNext = NULL;
-//        else
-//            pNext = p->next;
-        
         pPrior->next = q;
         q->next = pNext;
         qPrior->next = p;
@@ -225,7 +246,38 @@ void printDlist(DNode *head)
     printf("\n");
 }
 
+/*  计算链表中元素的个数  */
+int getDListLen(DNode *head)
+{
+    if (!head || !head->next) {
+        printf("元素个数为0 \n");
+        return 0;
+    }
+    int len = 0;
+    DNode *temp = head->next;
+    while (temp) {
+        ++len;
+        temp = temp->next;
+    }
+    return len;
+}
 
+/*  找到链表的尾节点  */
+DNode *getEndNodeOfDList(DNode *head)
+{
+    if (!head || !head->next) {
+        printf("链表为空。 \n");
+        return NULL;
+    }
+    DNode *end = head->next;
+    while (end->next) {
+        end = end->next;
+    }
+    return end;
+}
+
+
+/*  创建双向链表  */
 DNode *createDList(int *array, int len)
 {
     if(len < 1)
@@ -259,7 +311,7 @@ void swapDNode(DNode *head, DNode *p, DNode *q)
 {
     if(!p || !q || p == q || p == head || q == head)
     {
-        printf("交换失败“\n");
+        printf("交换失败\n");
         return;
     }
     DNode *pPrior = p->prior;  // p 的前驱节点
@@ -314,9 +366,7 @@ void freeDNode(DNode *head)
         temp = node;
         node = node->next;
         free(temp);
-//        printf(temp->data);
     }
-//    printf(head->data);
 }
 
 
@@ -450,7 +500,7 @@ void cocktailSortDList(DNode *head)
             if(p->data > q->data)
             {
                 swapDNode(head, p, q);
-                last_exchange = q;
+                last_exchange = p;
                 q = p->next;
                 flag = TRUE;
             }
@@ -489,6 +539,8 @@ void cocktailSortDList(DNode *head)
 //            printf("p->data%d  q->data%d\n", p->data, q->data);
         }
     }
+    
+    
     
 }
 
@@ -606,11 +658,7 @@ void gnomeSortDList(DNode *head)
             p = p->next;
         }
         else
-        {
-//            printf("exchange %d and %d\n", p->prior->data, p->data);
             swapDNode(head, p->prior, p);
-//            printDlist(head);
-        }
     }
 }
 
@@ -655,13 +703,14 @@ void selectSortSList(SNode *head)
             q = q->next;
         }
         swapSNode(head, p, min);
-//        printf("exchange %d and %d\n", p->data, min->data);
-//        printSList(head);
         p = min->next;
     }
 }
 
 
+//========================================================================================
+//                                      快速排序
+//========================================================================================
 
 //  快速排序 时间复杂度：n^2 / n*logn / n*logn  稳定行：不稳定  分治
 void quickSort(int *array, int begin, int end)
@@ -697,6 +746,53 @@ void quickSort(int *array, int begin, int end)
     quickSort(array, right_index + 1, end);
 }
 
+/*  快速排序的双向链表实现  */
+void quickSortDList(DNode *head, DNode *begin, DNode *end)
+{
+    if (!head || !head->next) {
+        printf("头节点为空 或者元素个数为零 \n");
+        return;
+    }
+//    DNode *mid = head->next;
+    DNode *node_1 = begin;
+    DNode *node_2 = end;
+    
+    while (node_1 != node_2) {
+        printf("11111\n");
+        while (node_1 != node_2) {
+            if (node_2->data < node_1->data) {
+                printf("right exchange %d and %d\n", node_1->data, node_2->data);
+                swapDNode(head, node_1, node_2);  // 2 在前  1 在后
+                printDlist(head);
+//                node_1 = node_2->next;
+                begin = node_2;
+                break;
+            }
+            if (node_1 == begin && node_2 == end) {
+//                end
+            }
+            node_2 = node_2->prior;
+        }
+        while (node_1 != node_2) {
+            if (node_2->data > node_1->data) {
+                printf("left exchange %d and %d\n", node_1->data, node_2->data);
+                swapDNode(head, node_1, node_2);
+                printDlist(head);
+//                node_2 = node_1->prior;
+                break;
+            }
+            node_2 = node_2->next;
+        }
+    }
+    quickSortDList(head, begin, node_1);
+//    quickSortDList(head, node_1->next, end);
+    
+}
+
+
+//========================================================================================
+//                                      插入排序
+//========================================================================================
 
 //  插入排序 时间复杂度：O(n^2)   稳定性：稳定
 void insertSort(int *array, int array_length)
@@ -1077,18 +1173,24 @@ int main(int argc, const char * argv[])
     printf("\n--------------------------\n");
 
     SNode *SHead = createSList(a, length);
+//    int len = getSListLen(SHead);
+//    printf("SHead len is %d\n", len);
+//    SNode *SEnd = getEndNodeOfSList(SHead);
+//    printf("%d\n", end->data);
     DNode *DHead = createDList(a, length);
+    DNode *DEnd = getEndNodeOfDList(DHead);
+//    printf("DList end node data is %d\n", end->data);
     
-    
+  
 //    bubbleSort(a, length);
 //    bubbleSortSList(SHead);
     
     
 //    cocktailSort(a, length);
-    cocktailSortDList(DHead);
+//    cocktailSortDList(DHead);
     
     
-//    oddEvenSort(a, length);t
+//    oddEvenSort(a, length);
 //    oddEvenSortSList(SHead);
     
     
@@ -1101,6 +1203,9 @@ int main(int argc, const char * argv[])
     
     
 //    quickSort(a, 0, length - 1);
+//    quickSortDList(DHead, DHead->next, DEnd);
+    
+    
 //    insertSort(a, length);
 //    shellSort(a, 0, length - 1);
 //    heapSort(a, 0, length - 1);
@@ -1120,6 +1225,54 @@ int main(int argc, const char * argv[])
     freeDNode(DHead);
 
     printf("\n--------------------------\n");
+    
+//
+//    typedef struct Node
+//    {
+//        char a;  // 1个字节
+//        int b;  // 4个字节
+//        char c;  // 1个字节
+//        short d;  // 2个字节
+//        char e;  // 1个字节
+//        struct Node *next;
+//    }SNode;
+//    SNode *B = (SNode *)malloc(sizeof(SNode));
+//    SNode *C = (SNode *)malloc(sizeof(SNode));
+//
+//    B->a = 'a';
+//    B->b = 1;
+//    B->c = 'c';
+//    B->d = 2;
+//    B->e = 'e';
+//    B->next = C;
+//
+//    C->a = 'a';
+//    C->b = 1;
+//    C->c = 'c';
+//    C->d = 2;
+//    C->e = 'e';
+//    C->next = NULL;
+//    printf("B           的地址为： %p\n", B);
+//    printf("B->a        的地址为： %p\n", &(B->a));
+//    printf("B->b        的地址为： %p\n", &(B->b));
+//    printf("B->c        的地址为： %p\n", &(B->c));
+//    printf("B->d        的地址为： %p\n", &(B->d));
+//    printf("B->e        的地址为： %p\n", &(B->e));
+//    printf("B->next     的地址为： %p\n", &(B->next));
+//    printf("B->next->a  的地址为： %p\n", &(B->next->a));
+//
+//    printf("C       的地址为： %p\n", C);
+//    printf("C->a    的地址为： %p\n", &(C->a));
+//    printf("C->b    的地址为： %p\n", &(C->b));
+//    printf("C->c    的地址为： %p\n", &(C->c));
+//    printf("C->d    的地址为： %p\n", &(C->d));
+//    printf("C->e    的地址为： %p\n", &(C->e));
+//    printf("C->next 的地址为： %p\n", &(C->next));
+//
+//    printf("%d \n", (int)sizeof(B->next));
+//    printf("%p\n%p\n%p\n%p\n%p\n%p\n%p\n%p\n\n", B, &(B->a), &(B->b), &(B->c), &(B->d), &(B->e), &(B->next), &(B->next->a));
+//    printf("%p\n%p\n%p\n%p\n%p\n%p\n%p\n", C, &(C->e), &(C->a), &(C->b), &(C->c), &(C->d), &(C->next));
+
     return 0;
     
 }
