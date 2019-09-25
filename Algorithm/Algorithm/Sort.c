@@ -747,6 +747,7 @@ void quickSort(int *array, int begin, int end)
 }
 
 /*  快速排序的双向链表实现  */
+/*  testing  未能准确找到每次的 begin end 节点     */
 void quickSortDList(DNode *head, DNode *begin, DNode *end)
 {
     if (!head || !head->next) {
@@ -800,7 +801,7 @@ void insertSort(int *array, int array_length)
     if(array_length < 2)
         return;
     int i,j,temp;
-    for(i = 1; i < array_length; ++i)
+    for(i = 1; i < array_length; ++i)  // 第一个不动 从第二个开始到最后一个
     {
         for(j = i - 1, temp = array[i];j >= 0 && array[j] > temp; --j)
             array[j + 1] = array[j];
@@ -808,6 +809,28 @@ void insertSort(int *array, int array_length)
     }
 }
 
+void insertSortDList(DNode *head)
+{
+    if (!head || !head->next) {
+        printf("链表为空\n");
+        return;
+    }
+    DNode *p ;  // 前插节点
+    DNode *q = head->next;  // 下一轮循环中 准备比较的节点
+    while (q) {
+        p = q->prior;
+        q = q->next;  // 指向下一轮插入比较的初始节点
+        while (p != head && p->data > p->next->data) {  // 前大于后
+            p = p->prior;  // 指针先移动 再进行交换
+            swapDNode(head, p->next, p->next->next);
+        }
+    }
+}
+
+
+//========================================================================================
+//                                      希尔排序
+//========================================================================================
 
 //  希尔排序。  时间复杂度：O(n^3/2)   稳定性：不稳定
 void shellSort(int *array, int begin, int end)
@@ -838,6 +861,9 @@ void shellSort(int *array, int begin, int end)
     }
 }
 
+//========================================================================================
+//                                      堆排序
+//========================================================================================
 
 /*
   堆排序
@@ -1207,6 +1233,7 @@ int main(int argc, const char * argv[])
     
     
 //    insertSort(a, length);
+    insertSortDList(DHead);
 //    shellSort(a, 0, length - 1);
 //    heapSort(a, 0, length - 1);
 //    mergeSort(a, 0, length - 1);
