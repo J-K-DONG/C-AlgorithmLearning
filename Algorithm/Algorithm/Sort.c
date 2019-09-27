@@ -19,10 +19,10 @@ typedef int bool;  //定义TRUE。FALSE
 //========================================================================================
 
 /*  取数组的最大值    */
-int getMaxData(int *array, int array_length)
+int getMaxData(int *array, int len)
 {
     int max = array[0];
-    for(int i = 1; i < array_length; ++i)
+    for(int i = 1; i < len; ++i)
     {
         if(array[i] > max)
             max = array[i];
@@ -31,10 +31,10 @@ int getMaxData(int *array, int array_length)
 }
 
 /*  取数组的最小值   */
-int getMinData(int *array, int array_length)
+int getMinData(int *array, int len)
 {
     int min = array[0];
-    for(int i = 1; i < array_length; ++i)
+    for(int i = 1; i < len; ++i)
     {
         if(array[i] < min)
             min = array[i];
@@ -377,15 +377,17 @@ void freeDNode(DNode *head)
 
 
 //   冒泡排序+优化  时间复杂度：n^2 / n / n^2   稳定性：稳定
-void bubbleSort(int *array, int array_length)
+void bubbleSort(int *array, int len)
 {
-    if(array_length < 2)
+    if (len < 2) {
+        printf("未排序\n");
         return;
+    }
     int temp = 0;
     int last_exchange_index = 0; // 上一次交换的位置
-    int sorted_board = array_length - 1; // 每次扫描的右边界
+    int sorted_board = len - 1; // 每次扫描的右边界
     bool exchange_flag = TRUE; // 判断每一轮排序是否有交换位置（TRUE有交换 表明排序还在进行，FALSE没有交换 表明排序未完成）
-    for(int i = 0; i < array_length; ++i)
+    for(int i = 0; i < len; ++i)
     {
         exchange_flag = FALSE; // 没有交换位置  （初始化本次循环 ）
         for(int j = 0; j < sorted_board; ++j)
@@ -450,6 +452,10 @@ void bubbleSortSList(SNode *head)
 /*   鸡尾酒排序 ： 时间复杂度： n^2 / n / n^2   稳定性： 稳定*/
 void cocktailSort(int *array, int len)
 {
+    if (len < 2) {
+        printf("未排序\n");
+        return;
+    }
     int sorted_left = 0;
     int sorted_right = len - 1;
     int last_exchange_index = 0;
@@ -539,9 +545,6 @@ void cocktailSortDList(DNode *head)
 //            printf("p->data%d  q->data%d\n", p->data, q->data);
         }
     }
-    
-    
-    
 }
 
 
@@ -552,6 +555,10 @@ void cocktailSortDList(DNode *head)
 /*  奇偶排序  时间复杂度： n^2    稳定性：稳定  */
 void oddEvenSort(int *array, int len)
 {
+    if (len < 2) {
+        printf("未排序\n");
+        return;
+    }
     bool exchange_flag = TRUE;
     while(exchange_flag)
     {
@@ -630,6 +637,10 @@ void oddEvenSortSList(SNode *head)
 /* 地精排序  时间复杂度：n^2  稳定性： 稳定*/
 void gnomeSort(int *array, int len)
 {
+    if (len < 2) {
+        printf("未排序\n");
+        return;
+    }
     int i = 0;
     while(i < len)
     {
@@ -667,16 +678,18 @@ void gnomeSortDList(DNode *head)
 //========================================================================================
 
 //  选择排序 时间复杂度：O(n^2) 稳定性：不稳定
-void selectSort(int *array, int array_length)
+void selectSort(int *array, int len)
 {
-    if(array_length < 2)
+    if (len < 2) {
+        printf("未排序\n");
         return;
+    }
     int min = 0;
     int temp = 0;
-    for(int i = 0; i < array_length; ++i)
+    for(int i = 0; i < len; ++i)
     {
         min = i;
-        for(int j = i + 1; j < array_length; ++j) // 找到最小的
+        for(int j = i + 1; j < len; ++j) // 找到最小的
             if(array[min] > array[j])
                 min = j;
         temp = array[i];  // 与当前min索引交换
@@ -689,7 +702,7 @@ void selectSortSList(SNode *head)
 {
     if(!head || !head->next)
     {
-        printf("unsorted\n");
+        printf("未排序 \n");
         return;
     }
     SNode *p = head->next;
@@ -715,8 +728,10 @@ void selectSortSList(SNode *head)
 //  快速排序 时间复杂度：n^2 / n*logn / n*logn  稳定行：不稳定  分治
 void quickSort(int *array, int begin, int end)
 {
-    if(begin > end - 1)
+    if(begin > end - 1){
+        printf("未排序\n");
         return;
+    }
     int mid = array[begin];
     int left_index = begin;
     int right_index = end;
@@ -747,11 +762,10 @@ void quickSort(int *array, int begin, int end)
 }
 
 /*  快速排序的双向链表实现  */
-/*  testing  未能准确找到每次的 begin end 节点     */
 void quickSortDList(DNode *head, DNode *begin, DNode *end)
 {
-    if (!head || !head->next) {
-        printf("头节点为空 或者元素个数为零 \n");
+    if (!head || !head->next || begin == end) {
+        printf("未排序\n");
         return;
     }
 //    DNode *mid = head->next;
@@ -759,34 +773,35 @@ void quickSortDList(DNode *head, DNode *begin, DNode *end)
     DNode *node_2 = end;
     
     while (node_1 != node_2) {
-        printf("11111\n");
         while (node_1 != node_2) {
             if (node_2->data < node_1->data) {
-                printf("right exchange %d and %d\n", node_1->data, node_2->data);
                 swapDNode(head, node_1, node_2);  // 2 在前  1 在后
-                printDlist(head);
-//                node_1 = node_2->next;
-                begin = node_2;
+                if (node_1 == begin) {
+                    begin = node_2;
+                }
+                if (node_2 == end) {
+                    end = node_1;
+                }
                 break;
-            }
-            if (node_1 == begin && node_2 == end) {
-//                end
             }
             node_2 = node_2->prior;
         }
         while (node_1 != node_2) {
             if (node_2->data > node_1->data) {
-                printf("left exchange %d and %d\n", node_1->data, node_2->data);
                 swapDNode(head, node_1, node_2);
-                printDlist(head);
-//                node_2 = node_1->prior;
+                if (node_2 == begin) {
+                    begin = node_1;
+                }
+                if (node_1 == end) {
+                    end = node_2;
+                }
                 break;
             }
             node_2 = node_2->next;
         }
     }
-    quickSortDList(head, begin, node_1);
-//    quickSortDList(head, node_1->next, end);
+    quickSortDList(head, begin, node_2);
+    quickSortDList(head, node_2->next, end);
     
 }
 
@@ -796,12 +811,14 @@ void quickSortDList(DNode *head, DNode *begin, DNode *end)
 //========================================================================================
 
 //  插入排序 时间复杂度：O(n^2)   稳定性：稳定
-void insertSort(int *array, int array_length)
+void insertSort(int *array, int len)
 {
-    if(array_length < 2)
+    if (len < 2) {
+        printf("未排序\n");
         return;
+    }
     int i,j,temp;
-    for(i = 1; i < array_length; ++i)  // 第一个不动 从第二个开始到最后一个
+    for(i = 1; i < len; ++i)  // 第一个不动 从第二个开始到最后一个
     {
         for(j = i - 1, temp = array[i];j >= 0 && array[j] > temp; --j)
             array[j + 1] = array[j];
@@ -809,20 +826,21 @@ void insertSort(int *array, int array_length)
     }
 }
 
+/*  插入排序的双向链表实现  */
 void insertSortDList(DNode *head)
 {
     if (!head || !head->next) {
         printf("链表为空\n");
         return;
     }
-    DNode *p ;  // 前插节点
-    DNode *q = head->next;  // 下一轮循环中 准备比较的节点
+    DNode *p ;  // 当前比较节点的前驱节点
+    DNode *q = head->next;  // 下一轮循环中 准备比较插入的节点
     while (q) {
-        p = q->prior;
-        q = q->next;  // 指向下一轮插入比较的初始节点
+        p = q->prior;  // 指向前驱节点
+        q = q->next;  // 指向下一轮插入比较的初始节点 q先移动指针 下面的比较和插入不改变 q 指针
         while (p != head && p->data > p->next->data) {  // 前大于后
             p = p->prior;  // 指针先移动 再进行交换
-            swapDNode(head, p->next, p->next->next);
+            swapDNode(head, p->next, p->next->next);  // p 指针指向不改变
         }
     }
 }
@@ -997,10 +1015,10 @@ void mergeSort(int *array, int begin, int end)
     
 }
 
-void printArray(int *array, int array_length)
+void printArray(int *array, int len)
 {
     //    printf("%d\n", length);
-    for(int i = 0; i < array_length; ++i)
+    for(int i = 0; i < len; ++i)
     {
         printf("%d ", array[i]);
     }
@@ -1072,13 +1090,15 @@ struct Node *nodeInsertSort(struct Node *list)
     return nodeList;
 }
 
-void bucketSort(int *array, int array_length)
+void bucketSort(int *array, int len)
 {
-    if(array_length < 2)
+    if (len < 2) {
+        printf("未排序\n");
         return;
+    }
     int i, j;
-    int min = getMinData(array, array_length);
-    int interval = (getMaxData(array, array_length) - min) / NBUCKET + 1; // 分开桶子
+    int min = getMinData(array, len);
+    int interval = (getMaxData(array, len) - min) / NBUCKET + 1; // 分开桶子
     struct Node **buckets = (struct Node **)malloc(sizeof(struct Node *) * NBUCKET);
     
     /*  初始化到指到桶子的指针, 指针地址赋值为空  */
@@ -1088,7 +1108,7 @@ void bucketSort(int *array, int array_length)
     }
     
     /*  判断每一个元素并放入对应的桶子中    */
-    for(i = 0; i < array_length; ++i)
+    for(i = 0; i < len; ++i)
     {
         struct Node *current = (struct Node *)malloc(sizeof(struct Node)); // 新建节点
         int pos = (array[i] - min) / interval; //找到对应的桶子
@@ -1123,7 +1143,7 @@ void bucketSort(int *array, int array_length)
         temp = buckets[i];
         while(temp)
         {
-            assert(j < array_length); // 检查参数的值
+            assert(j < len); // 检查参数的值
             array[j++] = temp->data;
             temp = temp->next;
         }
@@ -1202,106 +1222,81 @@ int main(int argc, const char * argv[])
 //    int len = getSListLen(SHead);
 //    printf("SHead len is %d\n", len);
 //    SNode *SEnd = getEndNodeOfSList(SHead);
-//    printf("%d\n", end->data);
+    
+    
     DNode *DHead = createDList(a, length);
     DNode *DEnd = getEndNodeOfDList(DHead);
-//    printf("DList end node data is %d\n", end->data);
+
     
   
+//    printf("using bubbleSort\n");
 //    bubbleSort(a, length);
 //    bubbleSortSList(SHead);
     
     
+//    printf("using cocktailSort\n");
 //    cocktailSort(a, length);
 //    cocktailSortDList(DHead);
     
     
+//    printf("using oddEvenSort\n");
 //    oddEvenSort(a, length);
 //    oddEvenSortSList(SHead);
     
     
+//    printf("using gnomeSort\n");
 //    gnomeSort(a, length);
 //    gnomeSortDList(DHead);
     
     
+//    printf("using selectSort\n");
 //    selectSort(a, length);
 //    selectSortSList(SHead);
     
     
+    printf("using quickSort\n");
 //    quickSort(a, 0, length - 1);
-//    quickSortDList(DHead, DHead->next, DEnd);
+    quickSortDList(DHead, DHead->next, DEnd);  // testing
     
     
+//    printf("using insertSort\n");
 //    insertSort(a, length);
-    insertSortDList(DHead);
+//    insertSortDList(DHead);
+    
+    
+//    printf("using shellSort\n");
 //    shellSort(a, 0, length - 1);
+    
+    
+//    printf("using heapSort\n");
 //    heapSort(a, 0, length - 1);
+    
+    
+//    printf("using mergeSort\n");
 //    mergeSort(a, 0, length - 1);
+    
+    
+//    printf("using bucketSort\n");
 //    bucketSort(a, length);
+    
+    
+//    printf("using countingSort\n");
 //    countingSort(a, length);
-
+    
+    
     printf("--------------------------\n");
     printf("排序后元素的顺序:\n");
     
 //    printArray(a, length);
     
 //    printSList(SHead);
-//    freeSNode(SHead);
+    freeSNode(SHead);
 
     printDlist(DHead);
     freeDNode(DHead);
 
     printf("\n--------------------------\n");
-    
-//
-//    typedef struct Node
-//    {
-//        char a;  // 1个字节
-//        int b;  // 4个字节
-//        char c;  // 1个字节
-//        short d;  // 2个字节
-//        char e;  // 1个字节
-//        struct Node *next;
-//    }SNode;
-//    SNode *B = (SNode *)malloc(sizeof(SNode));
-//    SNode *C = (SNode *)malloc(sizeof(SNode));
-//
-//    B->a = 'a';
-//    B->b = 1;
-//    B->c = 'c';
-//    B->d = 2;
-//    B->e = 'e';
-//    B->next = C;
-//
-//    C->a = 'a';
-//    C->b = 1;
-//    C->c = 'c';
-//    C->d = 2;
-//    C->e = 'e';
-//    C->next = NULL;
-//    printf("B           的地址为： %p\n", B);
-//    printf("B->a        的地址为： %p\n", &(B->a));
-//    printf("B->b        的地址为： %p\n", &(B->b));
-//    printf("B->c        的地址为： %p\n", &(B->c));
-//    printf("B->d        的地址为： %p\n", &(B->d));
-//    printf("B->e        的地址为： %p\n", &(B->e));
-//    printf("B->next     的地址为： %p\n", &(B->next));
-//    printf("B->next->a  的地址为： %p\n", &(B->next->a));
-//
-//    printf("C       的地址为： %p\n", C);
-//    printf("C->a    的地址为： %p\n", &(C->a));
-//    printf("C->b    的地址为： %p\n", &(C->b));
-//    printf("C->c    的地址为： %p\n", &(C->c));
-//    printf("C->d    的地址为： %p\n", &(C->d));
-//    printf("C->e    的地址为： %p\n", &(C->e));
-//    printf("C->next 的地址为： %p\n", &(C->next));
-//
-//    printf("%d \n", (int)sizeof(B->next));
-//    printf("%p\n%p\n%p\n%p\n%p\n%p\n%p\n%p\n\n", B, &(B->a), &(B->b), &(B->c), &(B->d), &(B->e), &(B->next), &(B->next->a));
-//    printf("%p\n%p\n%p\n%p\n%p\n%p\n%p\n", C, &(C->e), &(C->a), &(C->b), &(C->c), &(C->d), &(C->next));
-
     return 0;
-    
 }
 
 
