@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-typedef int bool;  //定义TRUE。FALSE
+typedef int bool;  //定义TRUE  FALSE
 #define TRUE 1;
 #define FALSE 0;
 
@@ -50,7 +50,15 @@ void swap(int *a, int *b)
     *b = tmp;
 }
 
-
+void printArray(int *array, int len)
+{
+    //    printf("%d\n", length);
+    for(int i = 0; i < len; ++i)
+    {
+        printf("%d  ", array[i]);
+    }
+    printf("\n");
+}
 //========================================================================================
 //                                     单链表工具函数
 //========================================================================================
@@ -855,24 +863,22 @@ void shellSort(int *array, int begin, int end)
 {
     if(begin > end - 1)
         return;
+    if (begin  == end - 1) {
+        if (array[begin] > array[end]) {
+            swap(&array[begin], &array[end]);
+        }
+        return;
+    }
+    
     for(int step = (end - begin) / 2; step > 0; step /= 2) //步长逐渐变成之前的一半
     {
         for(int i = begin; i < step; ++i) // 循环第一个步长中的每一个元素
         {
             for(int k = i + step; k <= end; k += step) // 循环后面其他的步长
             {
-                int j = k - step;
-                for(; j >= begin; j -= step) // 找到比当前检查的元素应该在的位置
-                {
-                    if(array[j] <= array[k])
-                        break;
-                }
-                if(j != k - step)
-                {
-                    int temp = array[k];
-                    for(int z = k; z > j + step; z -= step)
-                        array[z] = array[z - step];
-                    array[j + step] = temp;
+                while (array[k] < array[k - step] && (k - step >= begin)) {
+                    swap(&array[k], &array[k - step]);
+                    k = k - step;
                 }
             }
         }
@@ -893,16 +899,14 @@ void maxToTop(int *array, int begin, int end)
     if(begin > end - 1)
         return;
     int parrent = begin;
-    int child = parrent * 2 + 1, temp;
+    int child = parrent * 2 + 1;
     while(child < end)
     {
         if((child < end - 1) && (array[child] < array[child + 1]))
             ++child;
         if(array[child] > array[parrent]) // 将最大的元素移动到最顶端
         {
-            temp = array[parrent];
-            array[parrent] = array[child];
-            array[child] = temp;
+            swap(&array[child], &array[parrent]);
         }
         else
             break;
@@ -928,7 +932,7 @@ void buildMaxHeap_2(int *array, int begin, int end)
 {
     if(begin > end - 1)
         return;
-    int parrent, temp;
+    int parrent;
     for(int i = end; i > 0; --i)
     {
         if(i % 2)
@@ -941,9 +945,7 @@ void buildMaxHeap_2(int *array, int begin, int end)
         }
         if(array[i] > array[parrent])
         {
-            temp = array[parrent];
-            array[parrent] = array[i];
-            array[i] = temp;
+            swap(&array[i], &array[parrent]);
         }
     }
 }
@@ -952,15 +954,15 @@ void heapSort(int *array, int begin, int end)
 {
     if(begin > end - 1)
         return;
-    int temp;
     while(end > 0)
     {
         buildMaxHeap_2(array, begin, end);
-        temp = array[begin];
-        array[begin] = array[end];
-        array[end--] = temp;
+        swap(&array[begin], &array[end]);
+        end--;
     }
 }
+
+
 
 
 //  归并排序  时间复杂度：O(n * logn)  稳定性： 稳定
@@ -968,8 +970,7 @@ void mergeSortOrder(int *array, int begin, int mid, int end)
 {
     if(begin > end - 1)
         return;
-//    printf("小范围排序：");
-//    printf("%d %d %d\n", begin, mid, end);
+
     int *pBuf = (int *)malloc(sizeof(int) * (end - begin));
     int *pTemp = pBuf;
     int lindex = begin;
@@ -977,7 +978,6 @@ void mergeSortOrder(int *array, int begin, int mid, int end)
     
     while((lindex < mid) && (rindex < end))
         *pTemp++ = (array[lindex] < array[rindex] ? array[lindex++] : array[rindex++]);
-//    printf("比较完成\n");
     while(lindex < mid)
         *pTemp++ = array[lindex++];
     while(rindex <= end)
@@ -985,12 +985,9 @@ void mergeSortOrder(int *array, int begin, int mid, int end)
     pTemp = pBuf;
     for(int i = begin; i <= end; ++i)
         array[i] = *pTemp++;
-//    for(int i = begin; i <= end; i++)
-//        printf("%d ", array[i]);
-//    printf("\n");
-    
     free(pBuf);
 }
+
 void mergeSort(int *array, int begin, int end)
 {
     if(begin > end - 1)
@@ -999,11 +996,7 @@ void mergeSort(int *array, int begin, int end)
     {
         if(array[begin] > array[end])
         {
-            int temp = array[begin];
-            array[begin] = array[end];
-            array[end] = temp;
-//            printf("交换的两个元素:\n");
-//            printf("%d %d\n", array[begin], array[end]);
+            swap(&array[begin], &array[end]);
         }
         return;
     }
@@ -1015,14 +1008,7 @@ void mergeSort(int *array, int begin, int end)
     
 }
 
-void printArray(int *array, int len)
-{
-    //    printf("%d\n", length);
-    for(int i = 0; i < len; ++i)
-    {
-        printf("%d ", array[i]);
-    }
-}
+
 
 /*
  桶排序
@@ -1209,7 +1195,7 @@ void countingSort(int *array, int len)
 int main(int argc, const char * argv[])
 {
     // 排序结果都为从小到大
-    int a[] = {21,125,-1,49,9,37,27,43,-41,45};
+    int a[] = {125, -1, 34, 12, 55, -32, 77, 45, -11};
 //    int a[] = {};
     int length = sizeof(a) / sizeof(int);
     
@@ -1225,7 +1211,7 @@ int main(int argc, const char * argv[])
     
     
     DNode *DHead = createDList(a, length);
-    DNode *DEnd = getEndNodeOfDList(DHead);
+//    DNode *DEnd = getEndNodeOfDList(DHead);
 
     
   
@@ -1254,14 +1240,14 @@ int main(int argc, const char * argv[])
 //    selectSortSList(SHead);
     
     
-    printf("using quickSort\n");
+//    printf("using quickSort\n");
 //    quickSort(a, 0, length - 1);
-    quickSortDList(DHead, DHead->next, DEnd);  // testing
+//    quickSortDList(DHead, DHead->next, DEnd);
     
     
 //    printf("using insertSort\n");
 //    insertSort(a, length);
-//    insertSortDList(DHead);
+    insertSortDList(DHead);
     
     
 //    printf("using shellSort\n");
@@ -1290,8 +1276,8 @@ int main(int argc, const char * argv[])
 //    printArray(a, length);
     
 //    printSList(SHead);
-    freeSNode(SHead);
-
+//    freeSNode(SHead);
+//
     printDlist(DHead);
     freeDNode(DHead);
 
