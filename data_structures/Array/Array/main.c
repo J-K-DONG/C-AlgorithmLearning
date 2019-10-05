@@ -51,23 +51,55 @@ void swap(Array *array, int a, int b){
     array->array[b] = temp;
 }
 
-void getMinData(Array *array){
-    if (!array) {
+
+int getMinData(Array *array){
+    if (!array || !array->array || array->size == 0) {
         printf("array point null\n");
-        return;
+        return -1;
     }
+    int min = array->array[0];
+    for (int i = 0; i < array->size; ++i) {
+        if (min > array->array[i]) {
+            min = array->array[i];
+        }
+    }
+    return min;
 }
+
+
+int getMaxData(Array *array){
+    if (!array || !array->array || array->size == 0) {
+        printf("array point null\n");
+        return -1;
+    }
+    int max = array->array[0];
+    for (int i = 0; i < array->size; ++i) {
+        if (max < array->array[i]) {
+            max = array->array[i];
+        }
+    }
+    return max;
+}
+
+
+
+
+
 
 int main(int argc, const char * argv[]) {
     
     int size = 10;
     Array *array = creatArray(size);
     printArray(array);
-    array->array[0] = 1;
+    array->array[0] = -1;
     array->array[9] = 2;
     swap(array, 0, 9);
     printArray(array);
-    
+    int min = getMinData(array);
+    printf("min is %d\n", min);
+    int max = getMaxData(array);
+    printf("max is %d\n", max);
+
     
     return 0;
 }
