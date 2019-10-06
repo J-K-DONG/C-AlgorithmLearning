@@ -25,6 +25,14 @@ Array *creatArray(int size)
     return array;
 }
 
+void insertArrayData(Array *array, int position, int data){
+    if (!array || !array->array || array->size == 0 || position < 0) {
+        printf("array point null or position not correct\n");
+        return;
+    }
+    array->array[position] = data;
+}
+
 
 void printArray(Array *array)
 {
@@ -49,6 +57,16 @@ void swap(Array *array, int a, int b){
     int temp = array->array[a];
     array->array[a] = array->array[b];
     array->array[b] = temp;
+}
+
+void reverseArray(Array *array){
+    if (!array || !array->array || array->size < 1) {
+        printf("array is null \n");
+        return;
+    }
+    for (int i = 0; i < array->size / 2; ++i) {
+        swap(array, i, array->size - i - 1);
+    }
 }
 
 
@@ -99,7 +117,8 @@ int main(int argc, const char * argv[]) {
     printf("min is %d\n", min);
     int max = getMaxData(array);
     printf("max is %d\n", max);
-
+    reverseArray(array);
+    printArray(array);
     
     return 0;
 }
