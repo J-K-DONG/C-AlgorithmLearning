@@ -9,10 +9,13 @@
 #ifndef Header_h
 #define Header_h
 
-#include "CSingleLinkedList.h"
-#include "CDoubleLinkedList.h"
-#include "CSort.h"
-#include "CArray.h"
+
+#include "CSort/CSort.h"
+#include "CArray/CArray.h"
+#include "CLinkedList/CSingleLinkedList.h"
+#include "CLinkedList/CDoubleLinkedList.h"
+
+
 
 
 #endif /* Header_h */

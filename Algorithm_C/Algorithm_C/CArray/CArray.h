@@ -9,7 +9,7 @@
 #ifndef CArray_h
 #define CArray_h
 
-#include "LIbHeader.h"
+#include "../LIbHeader.h"
 
 
 int getMaxData(int *array, int len);
