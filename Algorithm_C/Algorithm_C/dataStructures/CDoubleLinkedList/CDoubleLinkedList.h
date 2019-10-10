@@ -9,7 +9,7 @@
 #ifndef CDoubleLinkedList_h
 #define CDoubleLinkedList_h
 
-#include "../LIbHeader.h"
+#include "../../LIbHeader.h"
 
 typedef struct DNode
 {

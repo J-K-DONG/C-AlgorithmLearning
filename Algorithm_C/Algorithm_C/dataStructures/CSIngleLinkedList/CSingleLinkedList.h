@@ -9,7 +9,7 @@
 #ifndef CSingleList_h
 #define CSingleList_h
 
-#include "../LIbHeader.h"
+#include "../../LIbHeader.h"
 
 struct Node
 {

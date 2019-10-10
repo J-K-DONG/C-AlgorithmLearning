@@ -9,9 +9,9 @@
 #ifndef CSort_h
 #define CSort_h
 
-#include "../CArray/CArray.h"
-#include "../CLinkedList/CSingleLinkedList.h"
-#include "../CLinkedList/CDoubleLinkedList.h"
+#include "../dataStructures/CArray/CArray.h"
+#include "../dataStructures/CSIngleLinkedList/CSingleLinkedList.h"
+#include "../dataStructures/CDoubleLinkedList/CDoubleLinkedList.h"
 
 typedef int bool;  //定义TRUE  FALSE
 #define TRUE 1;
